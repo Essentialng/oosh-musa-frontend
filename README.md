@@ -44,3 +44,47 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+-----------  Folder structure -------------------
+Atoms:
+
+Avatar: User profile pictures
+Button: Like, comment, share buttons
+Input: Text input for posts and comments
+Icon: Various icons used throughout the app
+
+
+Molecules:
+
+UserInfo: Combination of Avatar and username
+PostActions: Group of buttons for post interactions
+CommentInput: Input field with submit button for comments
+
+
+Organisms:
+
+PostCard: Complete post including UserInfo, content, and PostActions
+CommentSection: List of comments with CommentInput
+Navbar: App navigation with search and user menu
+
+
+Templates:
+
+FeedTemplate: Layout for the main feed page
+ProfileTemplate: Layout for user profile pages
+ExploreTemplate: Layout for discovery/explore page
+
+
+Pages:
+
+HomePage: Instantiated FeedTemplate with actual content
+ProfilePage: Instantiated ProfileTemplate with user-specific content
+ExplorePage: Instantiated ExploreTemplate with trending content
+
+
+Shared:
+
+Hooks: Custom hooks for data fetching, auth state, etc.
+Utils: Helper functions for data formatting, validation, etc.
+Context: Global state management (e.g., user context, theme context)
