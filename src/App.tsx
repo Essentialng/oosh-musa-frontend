@@ -1,25 +1,91 @@
-import React from "react";
+// // src/App.tsx
+// import React from "react";
+// import { BrowserRouter as Router } from "react-router-dom";
+// import AppRouter from "./route/AppRouter";
+// import { Provider } from "react-redux";
+// import store, { persistor } from "./redux/store";
+// import { ApolloProvider, useQuery } from "@apollo/client";
+// import client from "./graphql/client.apollo";
+// import { Toaster } from "react-hot-toast";
+// import './App.css';
+// import { AuthProvider } from "./context/AuthProvider";
+// import { PersistGate } from "redux-persist/integration/react";  // Correct
+// import { GET_ALL_POST } from "./graphql/query/post.query";
+// import { useDispatch } from "react-redux";
+// import { setPosts } from "./redux/slice/post.slice";
+
+
+// const App: React.FC = () => {
+//   const dispatch = useDispatch()
+//   // make api call to fetch all posts
+//   const { data, loading, error } = useQuery(GET_ALL_POST);
+//   dispatch(setPosts(data?.getAllPost))
+//   return (
+//     <ApolloProvider client={client}>
+//       <AuthProvider>
+//         <Provider store={store}>
+//           <PersistGate loading={null} persistor={persistor}>
+//             <Router>
+//               <Toaster position="top-center"/>
+//               <AppRouter />
+//             </Router>
+//           </PersistGate>
+//         </Provider>
+//       </AuthProvider>
+//     </ApolloProvider>
+//   );
+// };
+
+// export default App;
+
+
+// ---------------- version 2 --------------
+import React, { useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRouter from "./route/AppRouter";
 import { Provider } from "react-redux";
-import store from "./redux/store";
-import { ApolloProvider } from "@apollo/client";
+import store, { persistor } from "./redux/store";
+import { ApolloProvider, useQuery } from "@apollo/client";
 import client from "./graphql/client.apollo";
 import { Toaster } from "react-hot-toast";
-import './App.css'
+import './App.css';
+import { AuthProvider } from "./context/AuthProvider";
+import { PersistGate } from "redux-persist/integration/react"; // Correct
+import { GET_ALL_POST } from "./graphql/query/post.query";
+import { useDispatch } from "react-redux";
+import { setPosts } from "./redux/slice/post.slice";
+import LoaderSpinner from "./components/molecules/Loader/Loader.spinner";
 
+const FetchPosts: React.FC = () => {
+  const dispatch = useDispatch();
+  const { data, loading, error } = useQuery(GET_ALL_POST);
 
+  useEffect(() => {
+    if (data && !loading && !error) {
+      dispatch(setPosts(data.getAllPost));
+    }
+  }, [data, loading, error, dispatch]);
 
+  if (loading) return <LoaderSpinner color='purple'/>
+  if (error) return <div>Error fetching posts</div>;
+
+  return null;
+};
 
 const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <Provider store={store}>
-        <Router>
-        <Toaster position="top-center"/>
-          <AppRouter />
-        </Router>
-      </Provider>
+      <AuthProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <Router>
+              <Toaster position="top-center" />
+              <AppRouter />
+              <FetchPosts />
+            </Router>
+          </PersistGate>
+        </Provider>
+      </AuthProvider>
     </ApolloProvider>
   );
 };

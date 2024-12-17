@@ -4,7 +4,7 @@ import { useAppSelector } from '../../redux/ReduxType';
 
 
 
-interface ILink{
+export interface ILink{
     Title:string;
     Logo?:any;
     link?:string
@@ -13,7 +13,7 @@ interface ILink{
 
 const ListLink:React.FC<ILink> = ({Logo, Title, link}) => {
   
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+    const isDark = useAppSelector((state)=>state.theme.isDark)
 
     return (
     <li className={`group ${isDark ? 'hover:bg-darkBg hover:text-white' : 'hover:bg-white hover:text-deepBg'} p-2 rounded-sm ${Title === 'More' ? 'sm:hidden' : ''} w-full`}>

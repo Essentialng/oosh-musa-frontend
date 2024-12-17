@@ -12,7 +12,7 @@ interface IPlanLayout{
 
 const PlanTemplate:React.FC<IPlanLayout> = ({children}) => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   return (
     <div className={`w-[100%] h-[100vh] ${isDark ? 'bg-deepBg transition-all duration-500 text-darkText' : 'bg-deepLight text-left'} overflow-hidden custom-scrollbar`}>

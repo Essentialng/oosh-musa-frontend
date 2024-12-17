@@ -7,8 +7,8 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ initialDate = new Date() }) => {
-  const isDark = useAppSelector(state=>state.toggleTheme.isDark)
-  
+  const isDark = useAppSelector(state=>state.theme.isDark)
+
   const [currentDate, setCurrentDate] = useState(initialDate);
 
   const daysInMonth = (date: Date) => {

@@ -1,7 +1,9 @@
 import AuthLayout from "../components/templates/auth/AuthTemplate";
 import ChatTemplate from "../components/templates/chat/ChatTemplate";
+import CoverTemplate from "../components/templates/cover/CoverTemplate";
 import FeedTemplate from "../components/templates/feed/FeedTemplate";
 import PlanTemplate from "../components/templates/plan/PlanTemplate";
+import NotFound from "../pages/404/NotFound";
 import Homepage from "../pages/Homepage";
 import Live from "../pages/Live";
 import Login from "../pages/Login";
@@ -13,6 +15,7 @@ import Profile from "../pages/Profile";
 import Reel from "../pages/Reel";
 import Register from "../pages/Register";
 import Timeline from "../pages/Timeline";
+import UpdatePage from "../pages/UpdatePage";
 import UserProfile from "../pages/UserProfile";
 
 type RouteType = {
@@ -54,13 +57,6 @@ type RouteType = {
       protected: true,
     },
     {
-      path: '/plan',
-      name: 'Plan',
-      element: <Plan/>,
-      layout: PlanTemplate,
-      protected: true,
-    },
-    {
       path: '/news',
       name: 'News',
       element: <News/>,
@@ -73,20 +69,6 @@ type RouteType = {
       element: <Live/>,
       layout: FeedTemplate,
       protected: true,
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      element: <Login />,
-      layout: AuthLayout,
-      protected: false,
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      element: <Register />,
-      layout: AuthLayout,
-      protected: false,
     },
     {
       path: '/user/:userId',
@@ -103,11 +85,54 @@ type RouteType = {
       protected: true,
     },
     {
+      path: '/update/:userId',
+      name: 'Update Profile',
+      element: <UpdatePage/>,
+      layout: FeedTemplate,
+      protected: true,
+    },
+
+    // ------- plans and plan templates -------
+    {
+      path: '/plan',
+      name: 'Plan',
+      element: <Plan/>,
+      layout: PlanTemplate,
+      protected: true,
+    },
+
+    // ------- Auth and auth templates -------
+    {
+      path: '/login',
+      name: 'Login',
+      element: <Login />,
+      layout: AuthLayout,
+      protected: false,
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      element: <Register />,
+      layout: AuthLayout,
+      protected: false,
+    },
+    
+    // ---------- chat and chat template --------------
+    {
       path: '/chat/:userId',
       name: 'Chat',
       element: <Messenger />,
       layout: ChatTemplate,
       protected: true,
+    },
+
+    // ---------- Other template --------------
+    {
+      path: '*',
+      name: '404',
+      element: < NotFound/>,
+      layout: CoverTemplate,
+      protected: false,
     }
   ]
 

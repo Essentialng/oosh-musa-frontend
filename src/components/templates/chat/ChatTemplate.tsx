@@ -14,7 +14,7 @@ interface IChatLayoutProps {
 const ChatTemplate:React.FC<IChatLayoutProps> = ({children}) => {
 
 
-  const isDark = useAppSelector(state=>state.toggleTheme.isDark)
+  const isDark = useAppSelector(state=>state.theme.isDark)
   const isView = useAppSelector((state)=>state.viewChat.inView)
   const handleMenu = ()=>{
 

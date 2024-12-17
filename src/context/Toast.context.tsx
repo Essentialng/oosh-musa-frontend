@@ -5,7 +5,7 @@ interface ToastContextType {
     showToast: (message: string) => void;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const useToast = () => {
     const context = useContext(ToastContext);

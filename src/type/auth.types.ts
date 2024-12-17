@@ -1,3 +1,12 @@
+
+export type AuthState = {
+  accessToken: string | null;
+  refreshToken: string | null;
+  userId: string | null;
+};
+
+
+
 export interface RegistrationFormInputs {
     username: string;
     email: string;

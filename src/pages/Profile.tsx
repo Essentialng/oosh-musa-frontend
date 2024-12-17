@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import Background from '../assets/home/dew.jpg'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import Background from '../assets/profile/back7.jpeg'
 import Profile from '../assets/home/dog.svg'
 import { FaChevronLeft, FaChevronRight, FaHashtag } from 'react-icons/fa'
 // import { MdAdd } from 'react-icons/md'
@@ -13,12 +13,16 @@ import Status5 from '../assets/home/lantern.svg'
 import Status6 from '../assets/home/map.svg'
 import Status7 from '../assets/home/tower.svg'
 import Feed from '../components/organisms/Feed'
-import { MdCreate, MdGpsFixed, MdImage, MdVideocam } from 'react-icons/md'
 import { useAppSelector } from '../redux/ReduxType'
+import CreatePost from '../components/shared/CreatePost'
+import { Link } from 'react-router-dom'
+import { useMakeRequest } from '../hooks/useMakeRequest'
+import { USER_URL } from '../constant/resource'
+// import { useQuery } from '@apollo/client'
+// import { GET_USER } from '../graphql/query/user.query'
+// import { GET_USER_POST } from '../graphql/query/post.query'
 // -----status--------
 
-
-const imgSrc:string = "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
 
 interface IProfile{
     
@@ -27,8 +31,45 @@ interface IProfile{
 
 const Proflle:React.FC<IProfile> = () => {
     
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+    const isDark = useAppSelector((state)=>state.theme.isDark)
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [activeSelection, setActiveSelection] = useState('post')
+    const  auth = useAppSelector((state)=>state.user)
+    const [userData, setUserData] = useState<any>({})
+    const post = useAppSelector((state)=>state.posts)
+    const makeRequest = useMakeRequest()
+
+    // const userQuery = useQuery(GET_USER, {
+    //     variables: { id: auth.id }
+    //   });
+    
+    useEffect(()=>{
+        const fetchUserData = async()=>{
+            const onSuccess = (data: any)=>{
+                const userInfoData = data?.userExist
+                setUserData({...userInfoData})
+            }
+        
+            const payload = {
+                userId: auth._id
+            }
+
+            makeRequest(
+                USER_URL + `/getUser`,
+                'POST',
+                payload,
+                onSuccess,
+                console.log,
+                console.log
+            )
+        }
+        fetchUserData()
+    },[])
+
+    
+    const userPost = post?.posts?.filter((eachPost:any)=>{
+        return eachPost?.author?.id === auth?._id
+    })
 
 
 
@@ -46,24 +87,28 @@ const Proflle:React.FC<IProfile> = () => {
         }
     };
 
+     // selection functionality 
+     const handleSelection = (selection:string)=>{
+        setActiveSelection(selection)
+    }
 
 
   return (
     <div className={`rounded-lg ${isDark ? 'text-darkText' : ' text-deepBg'} p-2 overflow-auto custom-scrollbar`}>
         {/* profile */}
-        <section className='w-full h-[300px] relative'>
-            <img className='object-cover h-full w-full' src={Background} alt='background'/>
+        <section className='w-full h-[300px] relative bg-transparent'>
+            <img className='object-cover h-full w-full' src={auth?.profile || Background} alt='background'/>
             <div className='absolute -bottom-8 left-0 flex items-start justify-start gap-5'>
-                <img className='w-14 h-14 rounded-full object-cover shadow-md' src={Profile} alt="profile" />
+                <img className='w-14 h-14 rounded-full object-cover shadow-md' src={auth?.avatar || Profile} alt="profile" />
                 <div>
-                    <h2 className={`text-2xl font-bold ${!isDark && 'text-lightText'} mb-2`}>Musa Muhammed</h2>
+                    <h2 className={`text-2xl font-bold ${!isDark && 'text-lightText'} mb-2`}>{auth?.fullname || 'NA'}</h2>
                     <div className={`flex items-start flex-col shadow-md p-5 justify-start gap-2 font-semibold rounded-md ${isDark ? 'bg-deepBg text-lightText' : 'bg-deepLight text-deepBg'}`}>
-                        <p className='text-sm'>Software Engineer</p>
-                        <p className='text-xs'>@galapagous</p>
-                        <p className='text-xs'>Los Angeles, CA</p>
-                        <p className='text-xs'>New York, NY</p>
-                        <p className='text-xs'>100 <span className='text-blue-400'>followers</span></p>
-                        <button className={`text-sm px-4 py-[1px] rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>update</button>
+                        <p className='text-sm'>{userData?.profession || 'N/A'}</p>
+                        <p className='text-xs'>{userData?.username || 'NA'}</p>
+                        <p className='text-xs'>{userData?.state}</p>
+                        <p className='text-xs'>{userData?.country}</p>
+                        <p className='text-xs'>{userData?.followers?.length || 0} <span className='text-blue-400'>followers</span></p>
+                        <Link to={`/update/${auth._id}?id=${auth._id}&email=${auth.email}&step=stepOne`} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>update</Link>
                     </div>
                 </div>
             </div>
@@ -71,39 +116,10 @@ const Proflle:React.FC<IProfile> = () => {
 
 
 
-    {/* profile */}
-    <section className={`mt-20 overflow-auto rounded-lg text-sm ${isDark ? 'bg-darkBg text-darkText' : 'bg-lightBg text-deepBg'} p-5 mt-10`}>
-            <form className='flex items-center justify-center gap-3'>
-                <img className='w-10 h-10 object-cover rounded-full' src={imgSrc} alt="" />
-                <label className='p-3 bg-indigo-50 text-deepBg flex items-center gap-2 w-full rounded-full'>
-                    <input type='text' className='grow border-none outline-none bg-inherit' placeholder="what's on your mind?"/>
-                    <MdCreate className='text-indigo-400 text-lg'/>
-                </label>
-                <button className={`px-4 py-3 ${isDark ? 'bg-deepBg' : 'bg-deepLight'} rounded-full text-xs min-w-[100px]`}>
-                    Share Post
-                </button>
-            </form>
-            <div className='mt-4'>
-            <div className={`px-5 w-full flex items-center justify-start gap-10`}>
-                  <div className='flex items-center gap-2 cursor-pointer hover:bg-gray-100 hover:text-gray-600 px-2 py-[2px] rounded-full'>
-                      <MdImage className='text-blue-600 w-4 h-4'/>
-                      Image/Video
-                  </div>
-                  <div className='flex items-center gap-2 cursor-pointer hover:bg-gray-100 hover:text-gray-600 px-2 py-[2px] rounded-full'>
-                      <MdVideocam className='text-red-600 w-4 h-4'/>
-                      Live
-                  </div>
-                  <div className='flex items-center gap-2 cursor-pointer hover:bg-gray-100 hover:text-gray-600 px-2 py-[2px] rounded-full'>
-                      <FaHashtag className='text-cyan-600 w-4 h-4'/>
-                      Hashtag
-                  </div>
-                  <div className='flex items-center gap-2 cursor-pointer hover:bg-gray-100 hover:text-gray-600 px-2 py-[2px] rounded-full'>
-                      <MdGpsFixed className='text-indigo-600 w-4 h-4'/>
-                      Mention
-                  </div>
-              </div>
-            </div>
-        </section>
+    {/* create post */}
+    <div className='pt-10'>
+          <CreatePost userId={auth._id}/>
+        </div>
 
 
 
@@ -154,14 +170,32 @@ const Proflle:React.FC<IProfile> = () => {
 
         {/* posts */}
         <section className='mt-20 text-sm'>
-            <div>
-                <button>Photo</button>
-                <button>Photo</button>
+            <div className='w-full mt-20 border-b-2 sm:mb-10 mb-5 flex items-center justify-center gap-5'>
+                <button onClick={()=>{handleSelection('post')}} className={`mb-5 ${activeSelection === 'post' ? 'border-b-2 border-b-indigo-500' : ""}`}>Posts</button>
+                <button onClick={()=>{handleSelection('media')}} className={`mb-5 ${activeSelection === 'media' ? 'border-b-2 border-b-indigo-500' : ""}`}>Media</button>
+                <button onClick={()=>{handleSelection('comments')}} className={`mb-5 ${activeSelection === 'comments' ? 'border-b-2 border-b-indigo-500' : ""}`}>Comments</button>
             </div>
-            <Feed isDark={isDark} PostImg={Status1}/>
-            <Feed isDark={isDark} PostImg={Status2}/>
-            <Feed isDark={isDark} PostImg={Status3}/>
-            <Feed isDark={isDark} PostImg={Status4}/>
+            <div>
+                {
+                    activeSelection === 'post' && userPost?.map((post:any)=>{
+                        return(
+                            <Feed isDark={isDark} data={post}/>
+                        )
+                    })
+                }
+                {
+                    activeSelection === 'media' && 
+                    <div className='p-10 text-white'>
+                        Media here
+                    </div>
+                }
+                {
+                    activeSelection === 'comments' &&
+                    <div className='p-10 text-white'>
+                        Comments here
+                    </div>
+                }
+            </div>
         </section>
     </div>
   )

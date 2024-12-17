@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import emailTemp from '../../assets/others/email.svg';
 import { useForm } from 'react-hook-form';
 import { OTPInput } from '../../type/auth.types';
@@ -8,19 +8,23 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import  { useEmailVerification }  from '../../hooks/useEmailVerification'; // Create this custom hook
 import { useModal } from '../../hooks/useModal'; // Create this custom hook
+import LoaderSpinner from '../molecules/Loader/Loader.spinner';
 
 export interface EmailVerificationRef {
     showModal: () => void;
     closeModal: () => void;
+    email?: string;
 }
 
 const EMAIL_VERIFICATION_MODAL_ID = 'email_verification_modal';
 const OTP_DIGITS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth'];
 
-const EmailVerification = forwardRef<EmailVerificationRef>((_, ref) => {
+const EmailVerification = forwardRef<EmailVerificationRef, { email?: string} >(({email}, ref) => {
     const navigate = useNavigate();
     const { isOpen, openModal, closeModal } = useModal(EMAIL_VERIFICATION_MODAL_ID);
-    const { verifyEmail, resendToken, loading } = useEmailVerification();
+    const { verifyEmail, resendToken } = useEmailVerification();
+    const [loadingVerify, setLoadingVerify] = useState<boolean>(false)
+    const [loadingResend, setLoadingResend] = useState<boolean>(false)
 
     const {
         register,
@@ -38,14 +42,9 @@ const EmailVerification = forwardRef<EmailVerificationRef>((_, ref) => {
     const onSubmit = async (data: OTPInput) => {
         const token = Object.values(data).join('');
         try {
-            const success = await verifyEmail(token);
-            if (success) {
-                toast.success('Email verified');
-                setTimeout(closeModal, 1000);
-                navigate('/login');
-            } else {
-                toast.error('Verification failed');
-            }
+            const response:any = await verifyEmail(token, email as string);
+            response?.status && closeModal()
+            navigate('/login')
         } catch (error: any) {
             toast.error(error.message || 'Invalid or expired token');
         }
@@ -53,7 +52,7 @@ const EmailVerification = forwardRef<EmailVerificationRef>((_, ref) => {
 
     const handleResend = async () => {
         try {
-            const success = await resendToken();
+            const success = await resendToken(email as string);
             if (success) {
                 toast.success('Code resent. Please check your email.');
             }
@@ -99,12 +98,12 @@ const EmailVerification = forwardRef<EmailVerificationRef>((_, ref) => {
                             ))}
                         </div>
                         
-                        <button type="button" onClick={handleResend} className='my-5 text-darkBg hover:text-red-500' disabled={loading}>
-                            Resend code
+                        <button type="button" onClick={handleResend} className='my-5 text-darkBg hover:text-red-500' disabled={loadingResend}>
+                            {loadingResend ? toast.loading('resend..') : 'Resend token'}
                         </button>
 
-                        <button type="submit" className='mt-5 px-10 py-2 bg-darkBg text-white disabled:opacity-50' disabled={loading}>
-                            {loading ? 'Verifying...' : 'Verify'}
+                        <button type="submit" className='mt-5 px-10 py-2 bg-darkBg text-white disabled:opacity-50' disabled={loadingVerify}>
+                            {loadingVerify ? <LoaderSpinner color='blue'/> : 'Verify'}
                         </button>
                     </form>
                 </div>

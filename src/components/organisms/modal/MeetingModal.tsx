@@ -20,8 +20,7 @@ const MeetingModal = () => {
 //   },[])
 
     const modalRef = useRef<HTMLDialogElement>(null);
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-
+    const isDark = useAppSelector((state)=>state.theme.isDark)
 
     const openModal = () => {
         if (modalRef.current) {

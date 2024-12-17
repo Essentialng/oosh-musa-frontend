@@ -19,8 +19,7 @@ const imgSrc:string = "https://img.daisyui.com/images/stock/photo-1534528741775-
 const RightSideBar = () => {
 
 
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-  
+    const isDark = useAppSelector((state)=>state.theme.isDark)
 
     const [currentFilter, setCurrentMenu] = useState('chat')
 

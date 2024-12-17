@@ -11,7 +11,7 @@ interface IChatRightSideProps{
 
 const ChatRightSideBar:React.FC<IChatRightSideProps> = () => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   const handleAddStatus = ()=>{
     alert('comming soon')

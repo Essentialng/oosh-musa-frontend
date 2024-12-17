@@ -1,0 +1,15 @@
+export type User = {
+    fullname: string,
+    email: string,
+    username: string,
+    posts?:string[],
+    plans?:string[],
+    liveEvents?:string[],
+    profession?: string,
+    state?: string,
+    country?: string,
+    cover?: string,
+    avatar?: string,
+    followers?:string[],
+    followings?:string[],
+}

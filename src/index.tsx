@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloProvider } from '@apollo/client';
 import client from './client/apolloClient';
-import { ToastProvider } from './context/Toast.context';
 
 
 const root = ReactDOM.createRoot(
@@ -14,10 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      {/* <ToastProvider> */}
-        
         <App />
-      {/* </ToastProvider> */}
     </ApolloProvider>
   </React.StrictMode>
 );

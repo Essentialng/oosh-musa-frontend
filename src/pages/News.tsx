@@ -22,7 +22,7 @@ const News:React.FC<INews> = () => {
 
 
   let handleSelection:any;
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
 
   return (

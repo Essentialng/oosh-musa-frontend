@@ -12,8 +12,7 @@ interface IStatusCheck{
 
 const StatusProfile:React.FC<IStatusCheck> = ({profilePix, name, time}) => {
   
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-  
+    const isDark = useAppSelector((state)=>state.theme.isDark)
     return (
     <div className={`flex cursor-pointer text-sm p-2 items-center ${isDark ? 'hover:bg-darkBg hover:text-white' : 'hover:bg-white'} justify-between mb-5`}>
         <div className='flex items-start justify-start gap-2 '>

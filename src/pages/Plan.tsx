@@ -62,7 +62,7 @@ const Plan = () => {
     setItems(items.filter(item => item.id !== id));
   };
 
-const isdark = useAppSelector(state=>state.toggleTheme.isDark)
+const isdark = useAppSelector(state=>state.theme.isDark)
 
 const [activeSelection, setActiveSelection] = useState('months')
 

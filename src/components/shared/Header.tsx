@@ -1,74 +1,29 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom';
-import {TbCarSuv, TbCirclesRelation, TbWorld} from 'react-icons/tb';
-import {BsBriefcase, BsHouseCheck, BsMailbox} from 'react-icons/bs'
-import {FaMoon, FaSearch, FaShoppingCart, FaUserAstronaut} from 'react-icons/fa'
-import {IoBusiness, IoNavigateCircle} from 'react-icons/io5'
+// import {TbCarSuv, TbCirclesRelation, TbWorld} from 'react-icons/tb';
+// import {BsBriefcase, BsHouseCheck, BsMailbox} from 'react-icons/bs'
+import {FaMoon, FaSearch,} from 'react-icons/fa'
+// import {IoBusiness, IoNavigateCircle} from 'react-icons/io5'
 import { TfiShine } from "react-icons/tfi";
 import { useAppDispatch, useAppSelector } from '../../redux/ReduxType';
 import { toggle } from '../../redux/slice/themeSlice';
 import MovingMoneyRate from '../../services/ExchangeRate';
-
-
+import AuthContext from '../../context/AuthProvider';
+import { CgProfile } from "react-icons/cg";
+import { headerItems } from '../molecules/Header/HeaderList';
+import NewsCarossel from '../../services/NewsCarossel';
+import { IUserState } from '../../redux/slice/user.slice';
 
 
 
 
 const Header = () => {
-  const imgSrc:string = "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
 
+    const  auth = useAppSelector((state)=>state.user) || {};
+    const isDark = useAppSelector((state)=>state.theme.isDark)
 
-  // carossel items
-  const items = [
-      {id: 1, content: <div className='flex items-center gap-2'>
-      <Link to='#'>ENews</Link>
-      <TbWorld/>
-  </div>},
-  {id: 2, content: <div className='flex items-center gap-2'>
-      <Link to='#'>EJobs</Link>
-      <BsBriefcase/>
-  </div>},
-  {id: 3, content: <div className='flex items-center gap-2'>
-      <Link to='#'>EStores</Link>
-      <FaShoppingCart/>
-  </div>},
-  {id: 4, content: <div className='flex items-center gap-2'>
-      <Link to='#'>ETalent</Link>
-      <FaUserAstronaut/>
-  </div>},
-  {id: 5, content: <div className='flex items-center gap-2'>
-      <Link to='#'>EBusiness</Link>
-      <IoBusiness/>
-  </div>},
-  {id: 6, content: <div className='flex items-center gap-2'>
-      <Link to='#'>EProperties</Link>
-      <BsHouseCheck/>
-  </div>},
-  {id: 7, content: <div className='flex items-center gap-2'>
-      <Link to='#'>ECars</Link>
-      <TbCarSuv/>
-  </div>},
-  {id: 8, content: <div className='flex items-center gap-2'>
-      <Link to='#'>Directory</Link>
-      <IoNavigateCircle/>
-  </div>},
-  {id: 9, content: <div className='flex items-center gap-2'>
-      <Link to='#'>Dating</Link>
-      <TbCirclesRelation/>
-  </div>},
-  {id: 10, content: <div className='flex items-center gap-2'>
-      <Link to='#'>Mail</Link>
-      <BsMailbox/>
-  </div>}
-    ];
-
-
-
-
-  // current state from redux
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-  const dispatch = useAppDispatch()
-  const [currentMenu, setCurrentMenu] = useState('/')
+    const dispatch = useAppDispatch()
+    const [currentMenu, setCurrentMenu] = useState('/')
 
 
   // menu section handler function
@@ -100,9 +55,9 @@ return (
       <div className="navbar-center lg:flex text-md">
           <label className={`input ${isDark ? 'bg-deepLight text-deepBg' : 'border-deepBg border-2'} sm:flex hidden items-center gap-2 w-[600px] rounded-full`}>
               <FaSearch className={`text-indigo-400 ${isDark ? 'text-darkBg' : 'text-[gray]'}`}/>
-              <input className='grow' placeholder='search'/>
+              <input className='grow border-none outline-none' placeholder='search'/>
           </label>
-          <div className={`swap swap-rotate px-10 ${currentMenu === 'notify' ? 'text-indigo-500' : ''}`} onClick={handleDark}>
+          <div className={`swap swap-rotate px-10 ${currentMenu === 'notify' ? 'text-indigo-500' : ''} w-fit`} onClick={handleDark}>
               {isDark ? (
                   <TfiShine className='w-4 h-4 fill-current'/>
               ) : (
@@ -114,11 +69,16 @@ return (
       {/* right section */}
   <div className="navbar-end flex items-center gap-2">
       <div className="avatar">
-          <div className="w-6 rounded-full ring">
-              <img src={imgSrc} alt='avatar'/>
+          <div className="w-6 rounded-full">
+              {auth?.avatar ? <img src={auth?.avatar} alt='avatar'/> : <CgProfile className='w-full h-full'/>}
           </div>
       </div>
-      <Link to='/login' className="">Logout</Link>
+      {
+        auth?.fullname ? 
+        <Link to={`/profile/${auth._id}`} className="">{auth.fullname.split(' ')[1]}</Link>
+        :
+        <Link to='/login' className="">Login</Link>
+      }
   </div>
  
 
@@ -129,9 +89,12 @@ return (
   {/* other products */}
   <MovingMoneyRate isDark={isDark}/>
 
+  {/* news carossel */}
+  <NewsCarossel isDark={isDark}/>
+
   {/* other products */}
   <div className="w-full overflow-hidden flex items-center justify-center gap-10 text-sm p-2">
-      {items.map((eachItems, index)=>{
+      {headerItems.map((eachItems, index)=>{
           return(
               <Link to={`/${eachItems.id}`} key={eachItems.id} className={`flex-shrink-0 ${isDark? 'text-deepText' : 'text-left'} hover:text-indigo-500`}>
                   {eachItems.content}

@@ -15,7 +15,7 @@ import { useAppSelector } from '../../../redux/ReduxType';
 const AddPlan = forwardRef<HTMLDialogElement>((props, ref) => {
   const modalRef = useRef<HTMLDialogElement>(null);
 
-const isDark = useAppSelector(state=>state.toggleTheme.isDark)
+const isDark = useAppSelector(state=>state.theme.isDark)
 
   useImperativeHandle(ref, () => modalRef.current!, [modalRef]);
 

@@ -20,8 +20,7 @@ const video2 = 'hello'
 
 const Reel = () => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   const [currentSelection, setCurrentSelection] = useState('post')
 

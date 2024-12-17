@@ -16,7 +16,8 @@ interface IChatUserProfile{
 
 const ChatProfile:React.FC<IChatUserProfile> = ({name, lastMessage, lastMessageTime, lastMessageRead, isTyping, unreadMessages, profileImage}) => {
  
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
+  // const isDark = true
   const dispatch  = useAppDispatch()
 
 

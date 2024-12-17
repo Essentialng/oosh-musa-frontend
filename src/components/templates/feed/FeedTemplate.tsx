@@ -10,7 +10,7 @@ interface IFeedLayout{
 
 const FeedTemplate:React.FC<IFeedLayout> = ({children}) => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
     const handleMenu = (path: string) => {
     }
 

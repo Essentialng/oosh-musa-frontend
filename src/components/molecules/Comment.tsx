@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaThumbsDown, FaThumbsUp } from 'react-icons/fa'
+import ProfileIMG from '../../assets/others/avatar.jpeg'
 
 
 interface IComment{
@@ -17,7 +18,7 @@ interface IComment{
 const Comment:React.FC<IComment> = ({name, imgSrc, timestamp, content, isDark}) => {
   return (
     <div className={`flex p-2 text-sm rounded-md items-start justify-start gap-3 ${isDark ? 'bg-deepBg text-lightText' : 'bg-deepLight text-deepBg'} mb-3`}>
-        <img className='w-6 h-6 rounded-full' src={imgSrc} alt="profile" />
+        <img className='w-6 h-6 rounded-full' src={imgSrc || ProfileIMG} alt="profile" />
         <div>
             <h3>{name}</h3>
             <span className='text-gray-500'>{timestamp}</span>

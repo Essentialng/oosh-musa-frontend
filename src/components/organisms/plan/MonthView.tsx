@@ -30,8 +30,8 @@ const getDaysInMonth = (date: Date) => {
 
 const MonthView: React.FC<{ currentDate: Date; items: CalendarItem[] }> = ({ currentDate, items }) => {
     
-    const isDark = useAppSelector(state=>state.toggleTheme.isDark)
-    
+    const isDark = useAppSelector(state=>state.theme.isDark)
+
     const daysInMonth = getDaysInMonth(currentDate);
     const firstDayOfMonth = getFirstDayOfMonth(currentDate);
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);

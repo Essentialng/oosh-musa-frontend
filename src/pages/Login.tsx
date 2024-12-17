@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaLock } from 'react-icons/fa';
 import {MdMailOutline} from 'react-icons/md';
 import { useForm } from 'react-hook-form';
@@ -9,9 +9,19 @@ import { loginSchema } from '../validation/auth.schema';
 import { useMutation} from '@apollo/client';
 import toast from 'react-hot-toast';
 import { LOGIN_USER } from '../graphql/mutation/user.mutation';
-import ErrorText from '../components/molecules/ErrorText/ErrorText';
+import FormInput from '../components/molecules/AuthInput/FormInput';
+import AuthContext from '../context/AuthProvider';
+import LoaderSpinner from '../components/molecules/Loader/Loader.spinner';
+import { storeTokens } from '../utils/auth.utils';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/slice/user.slice';
+import { useMakeRequest } from '../hooks/useMakeRequest';
+import { AUTH_URL } from '../constant/resource';
+
+
 
 const Login = () => {
+    const navigate = useNavigate()
     const {
         register,
         handleSubmit,
@@ -19,24 +29,39 @@ const Login = () => {
     } = useForm<LoginFormInputs>({
         resolver: yupResolver(loginSchema)
     })
+    const dispatch = useDispatch()
+    const makeRequest = useMakeRequest()
+    const [loading, setLoading] = useState<boolean>(false)
 
-
-    const [login, {loading, error}] = useMutation(LOGIN_USER)
-
-    const handleLogin = async (formData: LoginFormInputs)=>{
-        try{
-            const userData = await login({
-                variables: {
-                    email: formData.email,
-                    password: formData.password
-                }
-            })
-            console.log(userData)
-        }catch(error:any){
-            toast.error('Error, try again later')
-            console.log(error)
+    
+    const handleLogin = async (formData: any) => {
+        setLoading(true);
+        try {
+            await makeRequest(
+                AUTH_URL + '/signin',
+                'POST',
+                formData,
+                (data) => {
+                    // Handle successful login
+                    if (data) {
+                        // Do something with the data
+                        dispatch(setUser(data));
+                        navigate('/');
+                    }
+                },
+                (error) => {
+                    console.error('Login error:', error);
+                    // Handle login error
+                    toast.error(error?.message || 'Login failed');
+                },
+                () => setLoading(false)
+            );
+        } catch (error) {
+            console.error('Signin catch error:', error);
+            setLoading(false);
         }
-    }
+    };
+
 
   return (
     <div className='w-screen sm:h-screen h-auto overflow-hidden flex flex-col sm:flex-row items-center justify-start'>
@@ -84,25 +109,22 @@ const Login = () => {
         <section className='text-black flex items-center justify-center flex-col sm:w-2/5 w-full'>
             <h1 className='mb-6 mt-10 sm:mt-0 sm:text-3xl text-2xl font-semibold text-indigo-400'>User Login</h1>
             <form onSubmit={handleSubmit(handleLogin)} action="" className='flex flex-col items-center gap-2 sm:w-3/4 w-5/6 pb-10 sm:pb-0'>
-                <label className='input bg-indigo-50 flex items-center gap-2 w-full rounded-full'>
-                    <MdMailOutline className='text-indigo-400 text-lg'/>
-                    <input id='email' {...register('email', {required: true})} type='email' className='grow' placeholder='email'/>
-                </label>
+                 <FormInput required={true} icon={<MdMailOutline className="text-indigo-500 outline-none text-sm" />} placeholder="Email" name="email" type="text" register={register} errors={errors} />
+                 <FormInput required={true} icon={<FaLock className="text-indigo-500 outline-none focus:border-none text-sm" />} placeholder="password" name="password" type="password" register={register} errors={errors} />
                 <div>
-                {errors?.email && <ErrorText message={errors.email?.message || 'This field is required'} />}
-                </div>
-                <label className='input bg-indigo-50 flex items-center gap-2 w-full rounded-full'>
-                    <FaLock className='text-indigo-400'/>
-                    <input id='password' {...register('password', {required: true})} type='password' className='grow' placeholder='password'/>
-                </label>
-                <div>
-                {errors?.password && <ErrorText message={errors.password?.message || 'This field is required'} />}
                 </div>
                 <div className='mt-2 flex items-center justify-between w-full'>
                     <Link className='text-indigo-300 underline' to='/register'>Register</Link>
                     <Link className='text-red-300 underline' to='/register'>Forget Password</Link>
                 </div>
-                <button className='mt-4 px-16 py-2 rounded-full sm:text-2xl text-xl font-semibold text-white bg-gradient-to-tr from-indigo-500 to-red-500 hover:bg-gradient-to-tl transition-all duration-500'>Login</button>
+                <button className='mt-4 px-16 py-2 rounded-full sm:text-2xl text-xl font-semibold text-white bg-gradient-to-tr from-indigo-500 to-red-500 hover:bg-gradient-to-tl transition-all duration-500'>
+                    {
+                        loading ?
+                        <LoaderSpinner color="white"/>
+                        :
+                        <span>Login</span>
+                    }
+                </button>
             </form>
         </section>
     </div>

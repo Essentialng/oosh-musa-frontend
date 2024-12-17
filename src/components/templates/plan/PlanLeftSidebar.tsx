@@ -12,7 +12,7 @@ import { IoPlanetOutline } from 'react-icons/io5';
 
 const PlanLeftSidebar:React.FC = () => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   const navigate = useNavigate()
 

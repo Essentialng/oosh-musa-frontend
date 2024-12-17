@@ -17,7 +17,7 @@ interface ILive{
 const Live:React.FC<ILive> = () => {
 
   const [counter, setCounter] = React.useState(60);
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   useEffect(() => {
     const timer = setInterval(() => {

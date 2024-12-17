@@ -11,7 +11,7 @@ interface IMeet {
 
 const Meeting: React.FC<IMeet> = () => {
 
-  const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+  const isDark = useAppSelector((state)=>state.theme.isDark)
 
   return (
     <div className={`rounded-lg my-2 ${isDark ? 'bg-deepBg text-white' : 'bg-white text-gray-800'} p-5 custom-scrollbar`}>

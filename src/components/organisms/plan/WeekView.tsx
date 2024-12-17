@@ -67,7 +67,7 @@ const WeekView: React.FC<{
     }
   };
 
-  const isDark = useAppSelector(state=>state.toggleTheme.isDark)
+  const isDark = useAppSelector(state=>state.theme.isDark)
 
   return (
     <div className={`flex h-[calc(100vh-200px)] overflow-auto ${isDark ? 'bg-darkBg':'bg-white'}`}>

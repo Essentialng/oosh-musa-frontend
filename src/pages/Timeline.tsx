@@ -32,8 +32,7 @@ const Timeline:React.FC<ITimeline> = ()=>{
       setCurrentSelection(selection)
     }
 
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
-
+    const isDark = useAppSelector((state)=>state.theme.isDark)
 
     return(
         <div className='w-full my-2 flex flex-col items-center justify-center gap-5 mb-10'>

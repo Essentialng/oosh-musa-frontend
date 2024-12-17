@@ -26,7 +26,7 @@ interface IMessengerProps{
 const Messenger:React.FC<IMessengerProps> = () => {
 
     const dispatch  = useAppDispatch()
-    const isDark = useAppSelector((state)=>state.toggleTheme.isDark)
+    const isDark = useAppSelector((state)=>state.theme.isDark)
     const handleChatNav = ()=>{
       dispatch(closeView())
     }
