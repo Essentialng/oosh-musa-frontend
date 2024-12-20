@@ -2,12 +2,6 @@ import React, { ChangeEvent, useCallback, useContext, useRef, useState } from 'r
 import { MdAdd, MdCancel, MdCreate, MdGpsFixed, MdImage, MdVideocam } from 'react-icons/md';
 import '../styles/custom.css';
 
-// post images
-import PostImage from '../assets/home/lantern.svg';
-import PostImage2 from '../assets/home/dog.svg';
-import PostImage3 from '../assets/home/read.svg';
-import PostImage5 from '../assets/home/tower.svg';
-
 // ------ imports --------
 import ProfileIMG from '../assets/others/avatar.jpeg';
 import Status1 from '../assets/home/dew.jpg';
@@ -31,6 +25,7 @@ const Homepage = () => {
     const isDark = useAppSelector(state=>state.theme.isDark)
     const  auth = useAppSelector((state)=>state.user)
     const post = useAppSelector((state)=>state.posts)
+    // console.log('all posts --->', post.posts)
 
 
     const [statusList] = React.useState([
@@ -95,11 +90,12 @@ const Homepage = () => {
             {/**---- News feed ----- */}
             <section className={`text-xs mt-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100`}>
                 {
-                    post?.posts?.map((eachData:any)=>{
+                    post?.posts?.length > 0 ? (post?.posts?.map((eachData:any)=>{
                         return(
                             <Feed isDark={isDark} data={eachData} />
                         )
-                    })
+                    })): 
+                    <p>No feed found</p>
                 }
             </section>
         </div>

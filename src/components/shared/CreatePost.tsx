@@ -9,10 +9,14 @@ import { postSchema } from '../../validation/post.schema';
 import toast from 'react-hot-toast';
 import LoaderSpinner from '../molecules/Loader/Loader.spinner';
 import { uploadToCloudinary } from '../../utils/upload.cloudinary';
-import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_POST } from '../../graphql/mutation/post.mutation';
-import { GET_POST } from '../../graphql/query/post.query';
-import client from '../../graphql/client.apollo';
+// import { useMutation, useQuery } from '@apollo/client';
+// import { CREATE_POST } from '../../graphql/mutation/post.mutation';
+// import { GET_POST } from '../../graphql/query/post.query';
+// import client from '../../graphql/client.apollo';
+import { useMakeRequest } from '../../hooks/useMakeRequest';
+import { POST_URL } from '../../constant/resource';
+import { useDispatch } from 'react-redux';
+import { addPost, setPosts } from '../../redux/slice/post.slice';
 
 interface ICreatePost {
     userId?: string
@@ -30,8 +34,9 @@ const CreatePost:React.FC<ICreatePost> = ({
     const postImageRef = useRef<HTMLInputElement>(null);
     const [postFile, setPostFile] = useState<File | null>(null);
     const [fileError, setFileError] = useState<string | null>(null)
-
-    const [createPost, {error}] = useMutation(CREATE_POST)
+    const makeRequest = useMakeRequest()
+    const dispatch = useDispatch()
+    // const [createPost, {error}] = useMutation(CREATE_POST)
 
 
     const {
@@ -90,6 +95,11 @@ const CreatePost:React.FC<ICreatePost> = ({
             
         }
     };
+
+    const onSuccess = (data:any)=>{
+        toast.success('Post created')
+        dispatch(addPost(data.data))
+    }
     
     const onSubmit = async(data:any)=>{
         setLoading(true)
@@ -100,14 +110,17 @@ const CreatePost:React.FC<ICreatePost> = ({
                 const fileURL = await uploadToCloudinary(postFile as File)  
                 payload = {...data, media: fileURL.url}
             }
-            const newPost = await createPost({
-                variables: {
-                    ...payload
-                }
-            })
-            toast.success('Post created')
+            await makeRequest(
+                POST_URL + '/create',
+                'POST',
+                {...payload},
+                onSuccess,
+                console.log,
+                ()=>{setLoading(false)}
+            )
+            // toast.success('Post created')
 
-            const postId = newPost?.data?.createPost?.id;
+            // const postId = newPost?.data?.createPost?.id;
             // const postData = await getPost(newPost?.data?.createPost?.id)
             
 

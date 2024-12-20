@@ -10,6 +10,7 @@ import Login from "../pages/Login";
 import Meeting from "../pages/Meeting";
 import Messenger from "../pages/Messenger";
 import News from "../pages/News";
+import Notification from "../pages/notification/Notification";
 import Plan from "../pages/Plan";
 import Profile from "../pages/Profile";
 import Reel from "../pages/Reel";
@@ -67,6 +68,13 @@ type RouteType = {
       path: '/live',
       name: 'Live',
       element: <Live/>,
+      layout: FeedTemplate,
+      protected: true,
+    },
+    {
+      path: '/notification/:userId',
+      name: 'Notification',
+      element: <Notification/>,
       layout: FeedTemplate,
       protected: true,
     },

@@ -12,9 +12,10 @@ interface IChatUserProfile{
   lastMessageTime?:string;
   lastMessageRead?:boolean;
   profileImage?:any;
+  isOnline?: boolean
 }
 
-const ChatProfile:React.FC<IChatUserProfile> = ({name, lastMessage, lastMessageTime, lastMessageRead, isTyping, unreadMessages, profileImage}) => {
+const ChatProfile:React.FC<IChatUserProfile> = ({name, lastMessage, lastMessageTime, lastMessageRead, isTyping, unreadMessages, profileImage, isOnline}) => {
  
   const isDark = useAppSelector((state)=>state.theme.isDark)
   // const isDark = true

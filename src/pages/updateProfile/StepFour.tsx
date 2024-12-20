@@ -6,11 +6,13 @@ import { useAppSelector } from '../../redux/ReduxType'
 import { useForm } from 'react-hook-form'
 import { IStep } from '../../type/form.type'
 import { IStepFour } from './types'
-import { useMutation } from '@apollo/client'
-import { UPDATE_USER } from '../../graphql/mutation/user.mutation'
+// import { useMutation } from '@apollo/client'
+// import { UPDATE_USER } from '../../graphql/mutation/user.mutation'
 import toast from 'react-hot-toast'
 import LoaderSpinner from '../../components/molecules/Loader/Loader.spinner'
 import { uploadToCloudinary } from '../../utils/upload.cloudinary'
+import { useMakeRequest } from '../../hooks/useMakeRequest'
+import { USER_URL } from '../../constant/resource'
 
 const StepFour:React.FC<IStep> = ({
   step,
@@ -24,6 +26,7 @@ const StepFour:React.FC<IStep> = ({
   const [coverPreview, setCoverPreview] = useState<string>(Background)
   const [profilePreview, setProfilePreview] = useState<string>(Avatar)
   const isDark = useAppSelector((state)=>state.theme.isDark)
+  const makeRequest = useMakeRequest()
 
   const {
     // control,
@@ -38,7 +41,7 @@ const StepFour:React.FC<IStep> = ({
     }
   });
 
-  const [updateUser, {error}] = useMutation(UPDATE_USER)
+  // const [updateUser, {error}] = useMutation(UPDATE_USER)
 
   const handleCover = () => {
     coverRef.current?.click()
@@ -69,6 +72,11 @@ const StepFour:React.FC<IStep> = ({
     }
   }
 
+  const onSuccess = (data:any)=>{
+    toast.success('success')
+    console.log('response', data)
+  }
+
   const onSubmit =async (data: IStepFour) => {
     setLoading(true)
     let profile:any
@@ -82,18 +90,32 @@ const StepFour:React.FC<IStep> = ({
       profile = await uploadToCloudinary(backgroundFile as File)
       payload = {...payload, profile: profile.url}
     }
+    // try {
+    //   await updateUser({
+    //     variables: {
+    //       ...payload
+    //     }
+    //   })
+    //   toast.success('Update')
+    // } catch (error: any) {
+    //   toast.error(error.message || 'Error try again')
+    //   console.log(error)
+    // }finally{
+    //   setLoading(false)
+    // }
     try {
-      await updateUser({
-        variables: {
-          ...payload
-        }
-      })
-      toast.success('Update')
-    } catch (error: any) {
-      toast.error(error.message || 'Error try again')
+      await makeRequest(
+        USER_URL + '/update',
+        'PUT',
+        {...payload},
+        onSuccess,
+        console.log,
+        ()=>setLoading(false)
+      )
+      toast.success('created')
+    } catch (error) {
+      toast.error('Error try again')
       console.log(error)
-    }finally{
-      setLoading(false)
     }
   }
 

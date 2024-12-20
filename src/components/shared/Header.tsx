@@ -13,6 +13,7 @@ import { CgProfile } from "react-icons/cg";
 import { headerItems } from '../molecules/Header/HeaderList';
 import NewsCarossel from '../../services/NewsCarossel';
 import { IUserState } from '../../redux/slice/user.slice';
+import { BsBell } from 'react-icons/bs';
 
 
 
@@ -67,7 +68,11 @@ return (
       </div>
 
       {/* right section */}
-  <div className="navbar-end flex items-center gap-2">
+  <div className="navbar-end flex gap-2 items-center gap-2">
+    <div className='p-2 relative'>
+        <BsBell/>
+        <Link to={`notification/${auth._id}`} className='absolute top-0 right-0 p-2 bg-red-500 text-white rounded-full w-3 h-3 flex items-center justify-center'>{1}</Link>
+    </div>
       <div className="avatar">
           <div className="w-6 rounded-full">
               {auth?.avatar ? <img src={auth?.avatar} alt='avatar'/> : <CgProfile className='w-full h-full'/>}

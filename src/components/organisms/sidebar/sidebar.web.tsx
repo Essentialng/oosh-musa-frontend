@@ -17,6 +17,7 @@ const SidebarWeb = () => {
     const isDark = useAppSelector((state)=>state.theme.isDark)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const user = useAppSelector(state=>state.user)
     const handleSignout = ()=>{
       removeTokens()
       dispatch(setUser(initialState))
@@ -28,7 +29,7 @@ const SidebarWeb = () => {
         <ul className={`w-full sm:px-4 py-2 flex sm:flex-col flex-row items-start sm:justify-start justify-between gap-5 z-50`}>
             <ListLink Title="Home" Logo={<FaHome className={`w-3 h-3 sm:group-hover:w-4 sm:group-hover:h-4 transition-all duration-500`}/>} link=""/>
             <ListLink Title="Reel" Logo={<FaFire className={`w-3 h-3 sm:group-hover:w-4 sm:group-hover:h-4 transition-all duration-500`}/>} link="reel"/>
-            <ListLink Title="chat" Logo={<MdChat className={`w-3 h-3 sm:group-hover:w-4 sm:group-hover:h-4 transition-all duration-500`}/>} link={`chat/1234`}/>
+            <ListLink Title="chat" Logo={<MdChat className={`w-3 h-3 sm:group-hover:w-4 sm:group-hover:h-4 transition-all duration-500`}/>} link={`chat/${user?._id}`}/>
             <ListLink Title="Profile" Logo={<FaUser className={`w-3 h-3 sm:group-hover:w-4 sm:group-hover:h-4 transition-all duration-500`}/>} link={`profile/1234`}/>
           </ul>
 

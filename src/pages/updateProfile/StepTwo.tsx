@@ -3,12 +3,13 @@ import TextInput from '../../components/molecules/FormField/TextInput';
 import { useAppSelector } from '../../redux/ReduxType';
 import { useForm } from 'react-hook-form';
 import { IStep } from '../../type/form.type';
-import { IStepTwo } from './types';
+import { IStepOne, IStepTwo } from './types';
 import toast from 'react-hot-toast';
 // import { CREATE_EDUCATION } from '../../graphql/mutation/user.mutation';
 // import { useMutation } from '@apollo/client';
 import LoaderSpinner from '../../components/molecules/Loader/Loader.spinner';
 import { useMakeRequest } from '../../hooks/useMakeRequest';
+import { USER_EDUCATION, USER_URL } from '../../constant/resource';
 
 
 const StepTwo:React.FC<IStep> = ({
@@ -35,19 +36,19 @@ const StepTwo:React.FC<IStep> = ({
     console.log('response', data)
   }
 
-  const onSubmit = async (data: IStepOne) => {
+  const onSubmit = async (data: IStepTwo) => {
     setLoading(true)
     const payload = {...data, userId: id}
     try {
       await makeRequest(
-        USER_URL + '/update',
-        'PUT',
+        USER_EDUCATION + '/create',
+        'POST',
         {...payload},
         onSuccess,
         console.log,
         ()=>setLoading(false)
       )
-      toast.success('updated')
+      toast.success('created')
     } catch (error) {
       toast.error('Error try again')
       console.log(error)

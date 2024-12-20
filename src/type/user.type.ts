@@ -1,4 +1,5 @@
 export type User = {
+    _id: string,
     fullname: string,
     email: string,
     username: string,
@@ -8,8 +9,9 @@ export type User = {
     profession?: string,
     state?: string,
     country?: string,
-    cover?: string,
+    profile?: string,
     avatar?: string,
     followers?:string[],
     followings?:string[],
+    friends?:string[],
 }

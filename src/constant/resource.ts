@@ -1,2 +1,5 @@
 export const AUTH_URL = 'api/v1/auth'
 export const USER_URL = 'api/v1/user'
+export const POST_URL = 'api/v1/post'
+export const USER_EDUCATION = 'api/v1/education'
+export const USER_WORK = 'api/v1/work'

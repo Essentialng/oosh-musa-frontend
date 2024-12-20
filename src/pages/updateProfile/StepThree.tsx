@@ -1,21 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TextInput from '../../components/molecules/FormField/TextInput'
 import Button from '../../components/atoms/Button/Button'
 import { useAppSelector } from '../../redux/ReduxType'
 import { useForm } from 'react-hook-form'
 import { IStep } from '../../type/form.type'
 import { IStepThree } from './types'
-import { useMutation } from '@apollo/client'
-import { CREATE_WORK } from '../../graphql/mutation/user.mutation'
+// import { useMutation } from '@apollo/client'
+// import { CREATE_WORK } from '../../graphql/mutation/user.mutation'
 import toast from 'react-hot-toast'
 import LoaderSpinner from '../../components/molecules/Loader/Loader.spinner'
+import { USER_WORK } from '../../constant/resource'
+import { useMakeRequest } from '../../hooks/useMakeRequest'
 
 
 const StepThree:React.FC<IStep> = ({
   step,
   id
 }) => {
-
+  
+  const [loading, setLoading] = useState<boolean>(false)
+  const makeRequest = useMakeRequest()
   const {
     register,
     handleSubmit,
@@ -26,16 +30,25 @@ const StepThree:React.FC<IStep> = ({
     }
   });
 
-  const [createWork, {loading, error}] = useMutation(CREATE_WORK)
+  // const [createWork, {loading, error}] = useMutation(CREATE_WORK)
+  const onSuccess = (data:any)=>{
+    toast.success('success')
+    console.log('response', data)
+  }
+  
 
   const onSubmit = async (data:IStepThree)=>{
     const payload = {...data, userId: id}
+
     try{
-      const response = await createWork({
-        variables: {
-          ...payload
-        }
-      })
+      await makeRequest(
+              USER_WORK + '/create',
+              'POST',
+              {...payload},
+              onSuccess,
+              console.log,
+              ()=>setLoading(false)
+      )
       toast.success('updated')
     }catch(error:any){
       console.log(error.message || 'Error creating experience')

@@ -36,6 +36,7 @@ const Proflle:React.FC<IProfile> = () => {
     const [activeSelection, setActiveSelection] = useState('post')
     const  auth = useAppSelector((state)=>state.user)
     const [userData, setUserData] = useState<any>({})
+    // const [userPost, setUserPost] = useState<any>({})
     const post = useAppSelector((state)=>state.posts)
     const makeRequest = useMakeRequest()
 
@@ -66,11 +67,10 @@ const Proflle:React.FC<IProfile> = () => {
         fetchUserData()
     },[])
 
-    
-    const userPost = post?.posts?.filter((eachPost:any)=>{
-        return eachPost?.author?.id === auth?._id
-    })
 
+    const userPost = post?.posts?.filter((eachPost:any)=>{
+        return eachPost?.author._id === auth?._id
+    })
 
 
     // scroll functionality logic

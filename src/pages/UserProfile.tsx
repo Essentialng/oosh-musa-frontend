@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // -----status--------
 import Status1 from '../assets/home/game.svg'
@@ -13,6 +13,12 @@ import { TbBoxMultiple } from 'react-icons/tb'
 import { MdMovieCreation } from 'react-icons/md'
 import { useAppSelector } from '../redux/ReduxType'
 import ProfileData from '../components/profile/ProfileData'
+// import { useMakeRequest } from '../hooks/useMakeRequest'
+import { POST_URL, USER_URL } from '../constant/resource'
+import { useParams } from 'react-router-dom'
+import { User } from '../type/user.type'
+import { Post } from '../type/post.type'
+import { useMakeRequest } from '../hooks/useMakeRequest'
 // -----status--------
 
 
@@ -29,6 +35,37 @@ const Video2 = 'placeholder2'
 const UserProflle:React.FC<IProfile> = () => {
   const [activeSelection, setActiveSelection] = useState('post')
   const isDark = useAppSelector((state)=>state.theme.isDark)
+  const allPost = useAppSelector((state)=>state.posts.posts)
+  const [loading, setLoading] = useState(false)
+  const [userData, setUserData] = useState<User>()
+  const [userPost, setUserPost] = useState([])
+  const makeRequest = useMakeRequest()
+  const userId = useParams().userId
+
+ 
+  useEffect(() => {
+    const onSuccess = async (data: any) => {
+      setUserData(data?.userExist);
+      const userPosts:any = allPost.filter((eachPost:any)=>{
+        return eachPost?.author?._id === userId
+      })
+      setUserPost(userPosts);
+    };
+  
+    const fetchUser = async () => {
+      setLoading(true);
+      await makeRequest(
+        USER_URL + '/getUser',
+        'POST',
+        {userId},
+        onSuccess,
+        console.log,
+        () => setLoading(false)
+      );
+    };
+    
+    fetchUser();
+  }, [allPost, userId]);
 
     // selection functionality 
     const handleSelection = (selection:string)=>{
@@ -36,11 +73,10 @@ const UserProflle:React.FC<IProfile> = () => {
     }
 
 
-
   return (
     <div className={`rounded-lg ${isDark ? 'text-darkText' : ' text-deepBg'} p-2 overflow-auto custom-scrollbar`}>
         {/* profile */}
-        < ProfileData/>
+        < ProfileData data={userData}/>
 
 
         {/* selections */}
@@ -52,16 +88,20 @@ const UserProflle:React.FC<IProfile> = () => {
 
         {/* posts */}
         {activeSelection === 'post' && <section className='text-sm'>
-            {/* <Feed isDark={isDark} PostImg={Status1}/>
-            <Feed isDark={isDark} PostImg={Status2}/>
-            <Feed isDark={isDark} PostImg={Status3}/>
-            <Feed isDark={isDark} PostImg={Status4}/> */}
+            {
+              userPost?.map((postData:any)=>{
+                return(
+                  <Feed isDark={isDark} data={postData}/>
+                )
+              })
+            }
         </section>}
 
 
         {/* media */}
         {
-        activeSelection === 'media' && <div className='grid grid-cols-3 grid-rows-1 gap-4'>
+        activeSelection === 'media' && 
+        <div className='grid grid-cols-3 grid-rows-1 gap-4'>
           <div className='relative after:absolute after:w-full after:h-full after:bg-black after:top-0 after:left-0 after:opacity-55'>
             <img src={Status5} alt='demo 1'/>
             <TbBoxMultiple className='absolute z-20 top-5 left-5 text-white'/>

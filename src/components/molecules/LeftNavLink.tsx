@@ -5,10 +5,11 @@ interface ILeftNavLink{
     handleSelection:any,
     label:string,
     value?:string,
+    isActive?:boolean
 }
 
 
-const LeftNavLink:React.FC<ILeftNavLink> = ({Icon, value, handleSelection, label}) => {
+const LeftNavLink:React.FC<ILeftNavLink> = ({Icon, value, handleSelection, label, isActive}) => {
  
 
     

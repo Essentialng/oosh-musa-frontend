@@ -8,6 +8,8 @@ export interface IUserState {
     avatar: string;
     profile: string;
     accessToken: string;
+    followers: string[];
+    followings: string[];
 }
 
 export const initialState: IUserState = {
@@ -18,6 +20,8 @@ export const initialState: IUserState = {
     avatar: '',
     profile: '',
     accessToken: '',
+    followers: [],
+    followings: [],
 };
 
 const UserSlice = createSlice({

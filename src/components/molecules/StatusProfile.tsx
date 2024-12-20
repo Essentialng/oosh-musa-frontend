@@ -8,6 +8,7 @@ interface IStatusCheck{
     name?:string;
     status?:any;
     time?:string,
+    hasUnseenStatus?: boolean
 }
 
 const StatusProfile:React.FC<IStatusCheck> = ({profilePix, name, time}) => {

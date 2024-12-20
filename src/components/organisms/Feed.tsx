@@ -8,7 +8,8 @@ import '../../styles/custom.css'
 import Reaction from '../molecules/Reaction/Reaction';
 import { GoDotFill } from "react-icons/go";
 import ProfileIMG from '../../assets/others/avatar.jpeg'
-import { getPostTimestamp } from '../../utils/day.format';
+import { useAppSelector } from '../../redux/ReduxType';
+// import { getPostTimestamp } from '../../utils/day.format';
 
 
 
@@ -22,7 +23,7 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
 
     const [showComment,setShowComment] = useState(false)
     const navigate = useNavigate()
-
+    const user = useAppSelector(state=>state.user)
     const handleShow = ()=>{
         setShowComment(!showComment)
     }
@@ -31,13 +32,16 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
         alert('Share triggered')
     }
 
+
     const handleLike = ()=>{
-        console.log(data)
     }
 
-
     const handleProfile = ()=>{
-        navigate('/user/1234')
+        if(user?._id === data?.author?._id){
+            navigate(`/profile/user._id`)
+        }else{
+            navigate(`/user/${data.author._id}`)
+        }
     }
 
 
@@ -57,7 +61,7 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
                             </div>
                             <div>
                                 <div className='flex items-center justify-start gap-5'>
-                                    <p className='text-xs'>{getPostTimestamp(data.created_at)}</p>
+                                    {/* <p className='text-xs'>{getPostTimestamp(data.created_at)}</p> */}
                                 </div>
                             </div>
                         </div>
