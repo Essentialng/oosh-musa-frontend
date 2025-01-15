@@ -13,8 +13,8 @@ const LoaderSpinner: React.FC<ILoadSpinner> = ({
     return (
         <TailSpin
             visible={true}
-            height="25"
-            width="25"
+            height="15"
+            width="15"
             color={color}
             ariaLabel="tail-spin-loading"
             radius="1"

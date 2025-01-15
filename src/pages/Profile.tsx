@@ -18,6 +18,9 @@ import CreatePost from '../components/shared/CreatePost'
 import { Link } from 'react-router-dom'
 import { useMakeRequest } from '../hooks/useMakeRequest'
 import { USER_URL } from '../constant/resource'
+import { userInfo } from 'os'
+import { useDispatch } from 'react-redux'
+import { updateUserProfile } from '../redux/slice/user.slice'
 // import { useQuery } from '@apollo/client'
 // import { GET_USER } from '../graphql/query/user.query'
 // import { GET_USER_POST } from '../graphql/query/post.query'
@@ -35,6 +38,7 @@ const Proflle:React.FC<IProfile> = () => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [activeSelection, setActiveSelection] = useState('post')
     const  auth = useAppSelector((state)=>state.user)
+    const dispatch = useDispatch()
     const [userData, setUserData] = useState<any>({})
     // const [userPost, setUserPost] = useState<any>({})
     const post = useAppSelector((state)=>state.posts)
@@ -49,6 +53,7 @@ const Proflle:React.FC<IProfile> = () => {
             const onSuccess = (data: any)=>{
                 const userInfoData = data?.userExist
                 setUserData({...userInfoData})
+                dispatch(updateUserProfile(userInfoData))
             }
         
             const payload = {

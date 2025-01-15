@@ -38,7 +38,7 @@ const MovingMoneyRate: React.FC<ITheme> = ({isDark}) => {
 
   return (
     <div className={`relative w-full ${isDark ? 'bg-darkBg transition-all duration-500 text-darkText' : 'bg-lightBg text-left'} overflow-hidden py-2`}>
-      <div className={`z-50 px-2 absolute left-0 ${isDark ? 'bg-darkBg' : 'bg-white'}`}>
+      <div className={`z-20 px-2 absolute left-0 ${isDark ? 'bg-darkBg' : 'bg-white'}`}>
         <h1 >
           Exchange Rate:
         </h1>

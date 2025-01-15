@@ -15,10 +15,10 @@ const StatusProfile:React.FC<IStatusCheck> = ({profilePix, name, time}) => {
   
     const isDark = useAppSelector((state)=>state.theme.isDark)
     return (
-    <div className={`flex cursor-pointer text-sm p-2 items-center ${isDark ? 'hover:bg-darkBg hover:text-white' : 'hover:bg-white'} justify-between mb-5`}>
-        <div className='flex items-start justify-start gap-2 '>
+    <div className={`flex cursor-pointer text-sm py-2 px-[2px] rounded-sm items-center ${isDark ? 'hover:bg-newtral_sec hover:text-newtral_pri' : 'hover:bg-newtral_sec hover:text-newtral_pri'} justify-between mb-5 hover:bg-deepBg hover:text-white`}>
+        <div className='flex items-center justify-center gap-2 '>
             <img className='h-7 w-7 rounded-full' src={profilePix} alt="profile" />
-            <div className=''>
+            <div className='text-xs'>
                 <h3>{name}</h3>
             </div>
         </div>

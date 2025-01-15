@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { MdMoreVert } from 'react-icons/md'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaHeart, FaShare } from 'react-icons/fa'
@@ -8,9 +8,17 @@ import '../../styles/custom.css'
 import Reaction from '../molecules/Reaction/Reaction';
 import { GoDotFill } from "react-icons/go";
 import ProfileIMG from '../../assets/others/avatar.jpeg'
-import { useAppSelector } from '../../redux/ReduxType';
-// import { getPostTimestamp } from '../../utils/day.format';
-
+import { useAppDispatch, useAppSelector } from '../../redux/ReduxType';
+import { useMakeRequest } from '../../hooks/useMakeRequest';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { commentSchema } from '../../validation/post.schema';
+import { COMMENT_URL, POST_URL } from '../../constant/resource';
+import toast from 'react-hot-toast';
+import LoaderSpinner from '../molecules/Loader/Loader.spinner';
+import { useFetchData } from '../../hooks/useFetchData';
+import { getPostTimestamp } from '../../utils/day.format';
+import { addComment, setPosts, updatePost } from '../../redux/slice/post.slice';
 
 
 interface IFeedProps{
@@ -22,8 +30,35 @@ interface IFeedProps{
 const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
 
     const [showComment,setShowComment] = useState(false)
+    const postURL = POST_URL + '/all'
     const navigate = useNavigate()
+    const [loading, setLoading] = useState<boolean>(false)
+    const dispatch = useAppDispatch()
     const user = useAppSelector(state=>state.user)
+    const {data:refetchData, error, loading:refreshLoading, refetch, pagination} = useFetchData<any>(
+        postURL
+    )
+
+    const makeRequest = useMakeRequest()
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+        formState: {errors}
+    } = useForm({
+        defaultValues: {
+            post: data?._id,
+            author: user?._id,
+        },
+        resolver: yupResolver(commentSchema)
+    })
+    const currentWord = watch('content')
+    // ---- comment and refetch to update ----
+    useEffect(()=>{
+        
+    }, [])
+
     const handleShow = ()=>{
         setShowComment(!showComment)
     }
@@ -34,7 +69,62 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
 
 
     const handleLike = ()=>{
+        if(!user) return toast.error('Signin to continue')
+        const payload = {
+            userId: user._id,
+            postId : data?._id
+        }
+        const onSuccess = (data:any)=>{
+            dispatch(setPosts(data?.data?.allPost))
+        }
+
+        const onFailure = (data:any)=>{
+            toast.error('faliure')
+        }
+
+        const onFinal = ()=>{
+            console.log('done')
+        }
+
+        makeRequest(
+            POST_URL + '/like',
+            'POST',
+            payload,
+            onSuccess,
+            onFailure,
+            onFinal
+        )
     }
+
+
+    const handleMakeComment = useCallback((data:any)=>{
+        setLoading(true)
+        const payload = {
+            ...data,
+        }
+        const onSuccess = async(data:any)=>{
+            dispatch(setPosts(data?.data?.post))
+            toast.success('success')
+        }
+        const onFinal = ()=>{
+            reset()
+            refetch()
+            setLoading(false)
+        }
+        // --- make your API call here ---
+        try {
+            makeRequest(
+                COMMENT_URL,
+                "POST",
+                payload,
+                onSuccess,
+                console.log,
+                onFinal   
+            )
+        } catch (error) {
+            toast.error('Error creating post. try again later')
+        }
+    }, [makeRequest,reset])
 
     const handleProfile = ()=>{
         if(user?._id === data?.author?._id){
@@ -61,12 +151,12 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
                             </div>
                             <div>
                                 <div className='flex items-center justify-start gap-5'>
-                                    {/* <p className='text-xs'>{getPostTimestamp(data.created_at)}</p> */}
+                                    <p className='text-xs'>{getPostTimestamp(data.created_at)} ago</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className={`dropdown dropdown-end ${isDark ? 'text-deepBg' : 'bg-lightBg'}`}>
+                    <div className={`dropdown dropdown-end ${isDark ? 'text-deepBg' : 'bg-lightBg'} relative z-50`}>
                         <div tabIndex={0} role="button" className="m-1">
                             <MdMoreVert className={`${isDark ? 'text-white' : 'text-deepBg'}`}/>
                         </div>
@@ -117,32 +207,36 @@ const Feed:React.FC<IFeedProps> = ({isDark, data}) => {
 
 
                 {/* comments */}
-                {showComment && <div className='mt-5 px-4 transition-all duration-500 ease-linear'>
+                {showComment ? <div className='mt-5 px-4 transition-all duration-500 ease-linear'>
                     <hr className='h-auto bg-deepLight mb-2 rounded-full'/>
-                    <div className='custom-scrollbar h-auto overflow-auto transition-all duration-500'>
+                    <div className='custom-scrollbar overflow-auto transition-all duration-500 h-[200px]'>
                         {
                             data?.comment?.map((eachComment: any)=>{
                                 return(
-                                    <Comment isDark={isDark} id={eachComment?._id} name={eachComment.author} imgSrc={eachComment?.author?.avatar} timestamp={eachComment.created_at} content={eachComment.content}/>
+                                    <Comment isDark={isDark} id={eachComment?._id} name={eachComment?.author?.fullname} authorId={eachComment?.author?._id} imgSrc={eachComment?.author?.avatar} timestamp={eachComment?.created_at} content={eachComment?.content} likes={eachComment?.likes} dislikes={eachComment?.dislikes}/>
                                 )
                             })
                         }
                     </div>
-                    <div className='flex items-center gap-3 justify-center py-3'>
-                        <label className={`input text-gray-600 flex items-center text-sm gap-2 w-full px-2 rounded-full ${isDark ? '' : 'border-darkBg border-2'}`}>
+                    <form onSubmit={handleSubmit(handleMakeComment)} className='flex items-center gap-3 justify-center py-3'>
                             <input
                                 type='text'
-                                className={`w-full`}
+                                className={`text-gray-600 flex items-center outline-none text-sm gap-2 w-full px-2 rounded-full ${isDark ? '' : 'border-darkBg border-2'} p-3`}
+                                {...register("content")}
                                 placeholder=''
                             />
-                        </label>
                         <button
-                            className={`mt-2 flex items-center gap-2 border-[2px] rounded-full px-3 py-2 ${isDark ? 'text-lightBg border-lightBg' : 'text-deepBg border-deepBg'}`}
+                            className={`flex items-center gap-2 border-[2px] rounded-full px-3 py-2 ${isDark ? 'text-lightBg border-lightBg hover:bg-deepLight hover:text-deepBg' : 'text-deepBg border-deepBg hover:bg-deepBg hover:text-darkText'}`}
+                            type='submit'
                         >
-                            comment
+                            {loading ? <LoaderSpinner color={'white'}/> : 'comment'}
                         </button>
-                    </div>
-                </div>}
+                    </form>
+                </div> : null}
+                <div>
+                    {errors?.content ? <p className='text-center text-red-500'>{errors?.content?.message}</p> : null}
+                    {errors?.content ? <p>{100 - Number(currentWord?.length) || 0}</p> : null}
+                </div>
             </div>
   )
 }

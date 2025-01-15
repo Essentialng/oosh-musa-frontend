@@ -58,8 +58,6 @@ const MeetingModal = () => {
             Share this link with colleague to join in
           </p>
         <button className='btn bg-darkBg block w-full my-2 px-3 py-2 rounded-sm text-sm mx-auto text-white'>Start</button>
-        {/* <Meet/> */}
-        {/* <MeetingComponent isDark={isDark} username='galapagous'/> */}
           </div>
         </dialog>
         <button className="btn w-2/3 hover:bg-darkBg hover:text-white">Join a Meet</button>

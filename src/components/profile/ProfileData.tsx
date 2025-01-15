@@ -1,12 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import Background from '../../assets/profile/back1.jpeg'
 import { useAppSelector } from '../../redux/ReduxType'
 import AuthContext from '../../context/AuthProvider'
 import { CgProfile } from 'react-icons/cg'
 import { User } from '../../type/user.type'
-import { POST_URL } from '../../constant/resource'
+import { POST_URL, USER_URL } from '../../constant/resource'
 import toast from 'react-hot-toast'
 import { fetchData } from '../../utils/axisoCall'
+import { from } from '@apollo/client'
+import LoaderSpinner from '../molecules/Loader/Loader.spinner'
 
 interface IProfileData {
     data: User | undefined
@@ -16,6 +18,8 @@ const ProfileData:React.FC<IProfileData> = (data) => {
     const isDark = useAppSelector((state)=>state.theme.isDark)
     const  {auth} = useContext(AuthContext)
     const user = useAppSelector((state)=>state.user)
+    const [loadingFollow, setLoadingFollow] = useState<boolean>(false)
+    const [loadingFriend, setLoadingFriend] = useState<boolean>(false)
 
     // ----- fetch user details and fill the page ----------
 
@@ -24,9 +28,10 @@ const ProfileData:React.FC<IProfileData> = (data) => {
 
     const handleFollowRequest = ()=>{
         // (user._id, data?.data?._id)
+        if(isFollower) return toast.custom('You already follow this person')
         const payload = {
             follower: user._id,
-            floowing: data?.data?._id
+            following: data?.data?._id
         }
 
         const onSuccess = (data:any)=>{
@@ -75,6 +80,46 @@ const ProfileData:React.FC<IProfileData> = (data) => {
         })
     }
 
+
+    const handleFriendRequest = ()=>{
+        if(isFreind) return toast.custom('You are already friend with this person')
+        try {
+            setLoadingFriend(true)
+            const payload = {
+                from: user._id,
+                to: data?.data?._id
+            }
+
+            console.log('data --->', payload)
+
+            const onSuccess = (data:any)=>{
+                toast.success('success')
+                console.log('follow response ---->', data)
+            }
+
+            const onFailure = (error:any)=>{
+                toast.error(error?.response?.data?.Message)
+                console.log(error)
+            }
+
+            const final = ()=>{
+                setLoadingFriend(false)
+            }
+            
+            fetchData({
+                url: `${USER_URL}/friend`,
+                method: 'POST',
+                payload,
+                onSuccess,
+                onFailure,
+                final
+            })
+        } catch (error:any) {
+            console.log(error)
+        }
+    }
+
+
   return (
     <div>
          <section className='w-full h-[300px] relative text-sm'>
@@ -101,15 +146,15 @@ const ProfileData:React.FC<IProfileData> = (data) => {
                           <div className='flex items-center justify-center gap-3'>
                             {
                                 isFollower ? 
-                                    <button onClick={()=>{alert('follow')}} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>UnFollow</button>
+                                    <button onClick={()=>{handleUnfollowRequest()}} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>UnFollow</button>
                                     :
-                                    <button onClick={()=>{alert('follow')}} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>Follow</button>
+                                    <button onClick={()=>{handleFollowRequest()}} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>Follow</button>
                             }
                             {
-                                isFollower ?
-                                    <button onClick={handleFollowRequest} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>Send Request</button> 
+                                !isFreind ?
+                                    <button onClick={handleFriendRequest} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>{`${loadingFriend ? <LoaderSpinner color='blue'/> : 'Send Request'}`}</button> 
                                     :
-                                    <button onClick={handleFollowRequest} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>Send Request</button>
+                                    <button onClick={handleFollowRequest} className={`text-sm px-5 py-2 rounded-full ${isDark ? 'bg-lightBg text-deepBg' : 'bg-deepBg text-lightText'}`}>Block Friend</button>
                             }
                           </div>
                     </div>

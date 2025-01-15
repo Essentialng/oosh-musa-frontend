@@ -15,7 +15,8 @@ module.exports = {
         // deepBg: '#404258',
         deepLight: '#EEEDEB',
         newtral_pri: '#4A4947',
-        newtral_sec: '#D8D2C2'
+        newtral_sec: '#D8D2C2',
+        newtral_chat: 'neutral-700'
       },
       fontFamily: {
         sans: ["Graphik", "sans-serif"],

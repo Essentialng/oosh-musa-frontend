@@ -1,6 +1,3 @@
-// types/notification.types.ts
-
-// Base user type for notifications
 export interface IUser {
     _id: string;
     name: string;

@@ -57,7 +57,7 @@ const NewsCarossel: React.FC<ITheme> = ({ isDark }) => {
 
   return (
     <div className={`relative w-full ${isDark ? 'bg-darkBg transition-all duration-500 text-white' : 'bg-white text-deepBg'} overflow-hidden py-1 flex items-center`}>
-      <div className={`z-50 px-2 absolute left-0 ${isDark ? 'bg-darkBg' : 'bg-white'}`}>
+      <div className={`z-20 px-2 absolute left-0 ${isDark ? 'bg-darkBg' : 'bg-white'}`}>
         <h1 className="font-semibold">
           Latest News:
         </h1>

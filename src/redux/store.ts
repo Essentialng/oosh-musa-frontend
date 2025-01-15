@@ -8,13 +8,18 @@ import themeReducer from './slice/themeSlice';
 import isViewReducer from './slice/chatView'
 import postReducer from './slice/post.slice'
 import authReducer from './slice/auth.slice'
+import conversationReducer from './slice/conversation.slice'
+import currentConversationreducer from './slice/currentConversation.slice'
+
 
 const rootReducer = combineReducers({
   user: userReducer,
   theme: themeReducer,
   viewChat: isViewReducer,
   posts: postReducer,
-  auth: authReducer
+  auth: authReducer,
+  conversation: conversationReducer,
+  currentConversation: currentConversationreducer
 });
 
 const persistConfig = {

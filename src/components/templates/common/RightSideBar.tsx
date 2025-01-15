@@ -6,21 +6,15 @@ import { BsCalendarEvent, BsSearch } from 'react-icons/bs'
 import { FaBirthdayCake, FaEdit } from 'react-icons/fa'
 import { MdEmail, MdMoreVert } from 'react-icons/md'
 import AddImage from '../../../assets/home/dew2.jpg'
-import code from '../../../assets/home/study.svg'
-import work from '../../../assets/home/read.svg'
-
-
-// ------images request--------
-const imgSrc:string = "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-// ------images request--------
 
 
 
 const RightSideBar = () => {
 
+  const friendRequest = useAppSelector(state=>state.user?.friendRequest)
+  const friends= useAppSelector(state=>state.user?.friends)
 
     const isDark = useAppSelector((state)=>state.theme.isDark)
-
     const [currentFilter, setCurrentMenu] = useState('chat')
 
 
@@ -60,7 +54,7 @@ const RightSideBar = () => {
            </div>
            <label className='bg-indigo-50 text-sm mt-3 px-2 py-[4px] flex items-center gap-2 w-full rounded-full'>
                 <BsSearch className='text-indigo-400 text-lg w-3 h-3'/>
-                <input type='text' className='grow bg-inherit outline-none font-semibold' placeholder='search'/>
+                <input type='text' className={`bg-inherit w-2/3 outline-none ${isDark ? 'text-gray-900' : ''}`} placeholder='search'/>
             </label>
 
             {/* filter selection */}
@@ -73,14 +67,25 @@ const RightSideBar = () => {
 
         {/* filter results */}
             {currentFilter === 'chats' ? <div className={`mt-3`}>
-                <Request isDark={isDark} name='Grace Joy' image={imgSrc}/>
-                <Request isDark={isDark} name='Agokeye Seyi' image={code}/>
-                <Request isDark={isDark} name='Juan Mata' image={work}/>
-            </div> : <div className={`mt-3`}>
-                <Chats isDark={isDark} name='Grace Joy' image={imgSrc}/>
-                <Chats isDark={isDark} name='Agokeye Seyi' image={code}/>
-                <Chats isDark={isDark} name='Juan Mata' image={work}/>
-            </div>}
+                {
+                    friends?.map((eachFriend:any)=>{
+                        return(
+                            <Chats id={eachFriend._id} isDark={isDark} name={eachFriend?.fullname} image={eachFriend?.avatar}/>
+                        )
+                    })
+                }
+            </div> : 
+            <div className={`mt-3`}>
+                {
+                    friendRequest?.map((eachRequest:any)=>{
+                        return(
+                            <Request isDark={isDark} name={eachRequest?.from?.fullname} image={eachRequest?.from?.avatar} id={eachRequest?._id}/>
+
+                        )
+                    })
+                }
+            </div>
+            }
             <button className='text-blue-400 text-sm'>see more</button>
         </div>
 

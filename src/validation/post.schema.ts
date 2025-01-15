@@ -5,3 +5,12 @@ export const postSchema = yup.object().shape({
     author: yup.string().required('content is required'),
     media: yup.string(),
   })
+
+
+export const commentSchema = yup.object().shape({
+  content: yup.string()
+  .required('type something to comtinue')
+  .max(100, 'text can be more than 100 letters'),
+  post: yup.string(),
+  author: yup.string()
+})

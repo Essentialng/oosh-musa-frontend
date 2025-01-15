@@ -47,7 +47,7 @@ return (
    <div className='navbar'>
       {/* left section */}
       <div onClick={()=>{handleSelectedMenu('/')}} className="navbar-start text-indigo-500">
-          <Link to='/' className="font-bold text-xl">OOSH</Link>
+          <Link to='/' className="font-bold text-xl text-deepBg">OOSH</Link>
       </div>
 
 

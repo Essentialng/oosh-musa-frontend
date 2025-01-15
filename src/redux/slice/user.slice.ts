@@ -10,6 +10,8 @@ export interface IUserState {
     accessToken: string;
     followers: string[];
     followings: string[];
+    friendRequest: string[];
+    friends:string[];
 }
 
 export const initialState: IUserState = {
@@ -22,6 +24,8 @@ export const initialState: IUserState = {
     accessToken: '',
     followers: [],
     followings: [],
+    friendRequest: [],
+    friends: []
 };
 
 const UserSlice = createSlice({
@@ -35,6 +39,10 @@ const UserSlice = createSlice({
         updateUserProfile: (state, action: PayloadAction<Partial<IUserState>>) => {
             return { ...state, ...action.payload };
         },
+
+        removeRequest: (state, action: PayloadAction<Partial<IUserState>>)=>{
+            return {...state, ...state.friendRequest.filter((eachRequest:any)=>eachRequest._id === action.payload)}
+        }
 
         // addFollower: (state, action: PayloadAction<string>) => {
         //     if (!state.followers) state.followers = [];

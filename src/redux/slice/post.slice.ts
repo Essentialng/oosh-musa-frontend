@@ -24,8 +24,8 @@ const postSlice = createSlice({
       state.posts.push(action.payload);
     },
 
-    updatePost: (state, action: PayloadAction<{ id: string; updates: Partial<Post> }>) => {
-      const postIndex = state.posts.findIndex((post) => post.id === action.payload.id);
+    updatePost: (state, action: PayloadAction<{ _id: string; updates: Partial<Post> }>) => {
+      const postIndex = state.posts.findIndex((post) => post.id === action.payload._id);
       if (postIndex !== -1) {
         state.posts[postIndex] = { ...state.posts[postIndex], ...action.payload.updates };
       }
@@ -50,10 +50,10 @@ const postSlice = createSlice({
       }
     },
 
-    addComment: (state, action: PayloadAction<{ postId: string; comment: { id: string; userId: string; content: string } }>) => {
-      const postIndex = state.posts.findIndex((post) => post.id === action.payload.postId);
+    addComment: (state, action: PayloadAction<any>) => {
+      const postIndex = state.posts.findIndex((post) => post.id === action.payload.post);
       if (postIndex !== -1) {
-        state.posts[postIndex].comments.push(action.payload.comment);
+        state.posts[postIndex].comments.push(action.payload);
       }
     },
 
