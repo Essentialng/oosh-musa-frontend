@@ -120,7 +120,6 @@ const Proflle:React.FC<IProfile> = () => {
         </section>
 
 
-
     {/* create post */}
     <div className='pt-10'>
           <CreatePost userId={auth._id}/>

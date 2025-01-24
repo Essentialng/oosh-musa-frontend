@@ -2,13 +2,16 @@ import AuthLayout from "../components/templates/auth/AuthTemplate";
 import ChatTemplate from "../components/templates/chat/ChatTemplate";
 import CoverTemplate from "../components/templates/cover/CoverTemplate";
 import FeedTemplate from "../components/templates/feed/FeedTemplate";
+import LiveTemplate from "../components/templates/live/LiveTemplate";
 import PlanTemplate from "../components/templates/plan/PlanTemplate";
 import NotFound from "../pages/404/NotFound";
 import Homepage from "../pages/Homepage";
 import Live from "../pages/Live";
+import LiveStrem from "../pages/LiveEvent";
 import Login from "../pages/Login";
 import Meeting from "../pages/Meeting";
 import Messenger from "../pages/Messenger";
+import Messenger2 from "../pages/Messenger2";
 import News from "../pages/News";
 import Notification from "../pages/notification/Notification";
 import Plan from "../pages/Plan";
@@ -125,6 +128,15 @@ type RouteType = {
       protected: false,
     },
     
+    // ---------- Live event template --------------
+    {
+      path: '/live/:eventId/:owner',
+      name: 'LiveStream',
+      element: <LiveStrem/>,
+      layout: LiveTemplate,
+      protected: false,
+    },
+
     // ---------- chat and chat template --------------
     {
       path: '/chat/:userId',

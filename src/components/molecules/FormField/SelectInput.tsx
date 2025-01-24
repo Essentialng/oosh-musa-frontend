@@ -10,7 +10,10 @@ interface ISelectInput{
     name: string;
     theme?: string;
     required?: boolean;
+    register?: any;
     options: ISelectOptions[];
+    value?: string;
+    onChange?: ()=>void
 }
 
 const SelectInput:React.FC<ISelectInput> = ({
@@ -18,14 +21,17 @@ const SelectInput:React.FC<ISelectInput> = ({
     name,
     theme,
     required,
-    options
+    options,
+    register,
+    onChange,
+    value
 }) => {
   return (
-    <div className={`flex flex-col items-${theme} justify-${theme}`}>
+    <div className={`flex flex-col text-newtral_pri items-${theme} justify-${theme}`}>
         {label ? <label htmlFor={name}>{label}</label> : ''}
-        <select required={required} name={name} className={`rounded outline-none bg-inherit p-2 border border-neutral-500 w-[200px] outline-[2px]`}>
+        <select {...register(`${name}`)} required={required} name={name} onChange={onChange} className={`rounded outline-none bg-inherit p-2 border border-neutral-500 text-neutral-700 w-[200px] outline-[2px]`}>
             {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} className='hover:text-white' value={option.value}>
                 {option.label}
             </option>
             ))}

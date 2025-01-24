@@ -6,8 +6,6 @@ import { useAppSelector } from '../../redux/ReduxType'
 import { useForm } from 'react-hook-form'
 import { IStep } from '../../type/form.type'
 import { IStepFour } from './types'
-// import { useMutation } from '@apollo/client'
-// import { UPDATE_USER } from '../../graphql/mutation/user.mutation'
 import toast from 'react-hot-toast'
 import LoaderSpinner from '../../components/molecules/Loader/Loader.spinner'
 import { uploadToCloudinary } from '../../utils/upload.cloudinary'
@@ -90,19 +88,6 @@ const StepFour:React.FC<IStep> = ({
       profile = await uploadToCloudinary(backgroundFile as File)
       payload = {...payload, profile: profile.url}
     }
-    // try {
-    //   await updateUser({
-    //     variables: {
-    //       ...payload
-    //     }
-    //   })
-    //   toast.success('Update')
-    // } catch (error: any) {
-    //   toast.error(error.message || 'Error try again')
-    //   console.log(error)
-    // }finally{
-    //   setLoading(false)
-    // }
     try {
       await makeRequest(
         USER_URL + '/update',
@@ -121,11 +106,11 @@ const StepFour:React.FC<IStep> = ({
 
   return (
     <div className='pb-8'>
-      <h1 className='text-2xl font-bold mb-4'>Profile Image</h1>
+      <h1 className='text-2xl font-bold'>Profile Image</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='relative flex items-center justify-center flex-col h-[250px] w-full overflow-hidden'>
           <img 
-            className='object-cover h-[200px] w-full' 
+            className='object-cover h-[150px] w-full rounded-sm' 
             src={coverPreview} 
             alt="cover" 
           />

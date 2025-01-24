@@ -186,7 +186,7 @@ const Messenger = () => {
 
 
   useSocketEvent('message:new', (data:any)=>{
-    setMessage(prev => [...prev, data.message]) // Add the new message to state
+    setMessage(prev => [...prev, data.message]) 
   })
 
   const handleSend = (event:any)=>{

@@ -1,7 +1,9 @@
-export const AUTH_URL = 'api/v1/auth'
-export const USER_URL = 'api/v1/user'
-export const POST_URL = 'api/v1/post'
-export const USER_EDUCATION = 'api/v1/education'
-export const USER_WORK = 'api/v1/work'
-export const CONVERSATION_URL = 'api/v1/chat'
-export const COMMENT_URL = 'api/v1/comment'
+export const AUTH_URL = "api/v1/auth";
+export const USER_URL = "api/v1/user";
+export const POST_URL = "api/v1/post";
+export const USER_EDUCATION = "api/v1/education";
+export const USER_WORK = "api/v1/work";
+export const CONVERSATION_URL = "api/v1/chat";
+export const COMMENT_URL = "api/v1/comment";
+export const LIVE_URL = "api/v1/live";
+export const STATUS_URL = "api/v1/status";

@@ -18,11 +18,9 @@ const CallModal: React.FC<CallModalProps> = ({
   isIncoming,
   onAccept,
   onReject,
-  otherUser,
-  caller
+  otherUser
 }) => {
   if (!isOpen) return null;
-  console.log('other--->', otherUser, 'user--->', caller)
 
   return (
     <div className="fixed inset-0 z-50">
@@ -34,11 +32,11 @@ const CallModal: React.FC<CallModalProps> = ({
         <div className="modal-box bg-base-200 relative z-50 shadow-xl">
           <div className="flex flex-col items-center justify-center gap-4">
             <div className="animate-pulse">
-              {/* <img 
-                src={otherUser[0]?.avatar} 
-                alt={otherUser[0]?.fullname} 
+              <img 
+                src={otherUser?.avatar} 
+                alt={otherUser?.fullname} 
                 className="w-24 h-24 object-cover rounded-full border-4 border-base-300"
-              /> */}
+              />
             </div>
             
             <h3 className="font-bold text-lg">
