@@ -42,64 +42,59 @@
 
 // ------- version 2 --------
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface IModal {
-    children: React.ReactNode;
-    toggler: () => void;
-    showModal: boolean;
-    openText?: string;
-    title?: string;
-    description?: string;
+  children: React.ReactNode;
+  toggler: () => void;
+  showModal: boolean;
+  openText?: string;
+  title?: string;
+  description?: string;
 }
 
 const Modal: React.FC<IModal> = ({
-    children,
-    showModal,
-    toggler,
-    title,
-    description
+  children,
+  showModal,
+  toggler,
+  title,
+  description,
 }) => {
-    const modalRef = useRef<HTMLDialogElement>(null);
+  const modalRef = useRef<HTMLDialogElement>(null);
 
-    useEffect(() => {
-        if (showModal) {
-            modalRef.current?.showModal();
-        } else {
-            modalRef.current?.close();
-        }
-    }, [showModal]);
+  useEffect(() => {
+    if (showModal) {
+      modalRef.current?.showModal();
+    } else {
+      modalRef.current?.close();
+    }
+  }, [showModal]);
 
-    const handleClose = () => {
-        toggler();
-    };
+  const handleClose = () => {
+    toggler();
+  };
 
-    return (
-        <dialog 
-            ref={modalRef} 
-            className="modal modal-bottom sm:modal-middle"
-            onClose={handleClose}
-        >
-            <div className="modal-box">
-                {title && <h3 className="font-bold text-lg">{title}</h3>}
-                {description && <p className="py-4">{description}</p>}
-                <div className="modal-content">
-                    {children}
-                </div>
-                <div className="modal-action">
-                    <button 
-                        className="btn" 
-                        onClick={handleClose}
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-            <form method="dialog" className="modal-backdrop">
-                <button onClick={handleClose}>close</button>
-            </form>
-        </dialog>
-    );
+  return (
+    <dialog
+      ref={modalRef}
+      className="modal modal-bottom sm:modal-middle rounded-sm"
+      onClose={handleClose}
+    >
+      <div className="modal-box">
+        {title && <h3 className="font-bold text-lg">{title}</h3>}
+        {description && <p className="py-4">{description}</p>}
+        <div className="modal-content">{children}</div>
+        <div className="modal-action">
+          <button className="btn" onClick={handleClose}>
+            Close
+          </button>
+        </div>
+      </div>
+      <form method="dialog" className="modal-backdrop">
+        <button onClick={handleClose}>close</button>
+      </form>
+    </dialog>
+  );
 };
 
 export default Modal;

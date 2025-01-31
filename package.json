@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@hookform/resolvers": "^3.9.0",
     "@reduxjs/toolkit": "^2.4.0",
     "@testing-library/jest-dom": "^5.17.0",

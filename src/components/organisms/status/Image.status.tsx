@@ -1,105 +1,3 @@
-// import React, { useRef, useState } from "react";
-// import { useAppSelector } from "../../../redux/ReduxType";
-// import Cropper from "react-easy-crop";
-// import { Point, Area } from "react-easy-crop/types";
-// import { MdOutlineUpload } from "react-icons/md";
-// import {
-//   ALLOWED_STATUS_IMAGE,
-//   MAX_FILE_SIZE,
-// } from "../../../constant/constants";
-// import toast from "react-hot-toast";
-
-// const ImageStatus = () => {
-//   const isDark = useAppSelector((state) => state.theme.isDark);
-//   const [statusFile, setStatusFile] = useState("");
-//   const fileRef = useRef<HTMLInputElement>(null);
-//   const [error, setError] = useState("");
-//   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
-//   const [zoom, setZoom] = useState(1);
-
-//   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
-//     console.log(croppedArea, croppedAreaPixels);
-//   };
-
-//   const handleFile = (file: any) => {
-//     if (file?.target?.files[0]) {
-//       const imageFile = file?.target?.files[0];
-
-//       console.log("file", imageFile);
-
-//       if (!ALLOWED_STATUS_IMAGE?.includes(imageFile?.type)) {
-//         setError("Invalid file type. Please upload an image (JPEG, PNG, GIF)");
-//         toast.error(
-//           "Invalid file type. Please upload an image (JPEG, PNG, GIF)"
-//         );
-//         return;
-//       }
-
-//       if (file.size > MAX_FILE_SIZE) {
-//         setError(
-//           `File too large. Maximum sise is ${MAX_FILE_SIZE / (1024 * 1024)} MB.`
-//         );
-//         toast.error(
-//           `File too large. Maximum sise is ${MAX_FILE_SIZE / (1024 * 1024)} MB.`
-//         );
-//         return;
-//       }
-//       const objectURL = URL.createObjectURL(imageFile);
-//       setStatusFile(objectURL);
-//     }
-//   };
-
-//   return (
-//     <div
-//       className={`bg-deepLight text-black
-//       font-Mon w-full h-full text-sm rounded-full p-5`}
-//     >
-//       {statusFile ? (
-//         <div className="flex mt-10 flex-col items-center justify-center">
-//           <Cropper
-//             image={statusFile}
-//             crop={crop}
-//             zoom={zoom}
-//             aspect={4 / 3}
-//             onCropChange={setCrop}
-//             onCropComplete={onCropComplete}
-//             onZoomChange={setZoom}
-//           />
-//           <input
-//             value={zoom}
-//             min={1}
-//             max={3}
-//             step={0.1}
-//             onChange={(e) => setZoom(Number(e.target.value))}
-//             type="range"
-//             className="z-50"
-//           />
-//         </div>
-//       ) : (
-//         <div className="flex items-center justify-center flex-col">
-//           <h1>Choose An Image</h1>
-//           <MdOutlineUpload
-//             onClick={() => {
-//               fileRef?.current?.click();
-//             }}
-//             className={`w-10 h-10 cursor-pointer`}
-//           />
-//           <input
-//             className="hidden"
-//             ref={fileRef}
-//             type="file"
-//             name="status"
-//             onChange={handleFile}
-//           />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ImageStatus;
-
-// -------- version 2 ---------
 import React, { useRef, useState } from "react";
 import { useAppSelector } from "../../../redux/ReduxType";
 import Cropper from "react-easy-crop";
@@ -113,9 +11,10 @@ import toast from "react-hot-toast";
 import { uploadToCloudinary } from "../../../utils/upload.cloudinary";
 import { useMakeRequest } from "../../../hooks/useMakeRequest";
 import { STATUS_URL } from "../../../constant/resource";
+import LoaderSpinner from "../../molecules/Loader/Loader.spinner";
 
 const ImageStatus = () => {
-  const isDark = useAppSelector((state) => state.theme.isDark);
+  // const isDark = useAppSelector((state) => state.theme.isDark);
   const [statusFile, setStatusFile] = useState<string | null>(null);
   const [postFile, setPostFile] = useState<File | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
@@ -210,16 +109,16 @@ const ImageStatus = () => {
       toast.error("Please crop your image first");
       return;
     }
-    alert(statusText);
+    // alert(statusText);
     if (postFile === null) return;
     setIsUploading(true);
     try {
-      // const fileURL = await uploadToCloudinary(postFile as File);
-      const fileURL = "hellos from text";
+      const fileURL = await uploadToCloudinary(postFile as File);
       const payload = {
         author: User?._id,
         text: statusText,
-        media: fileURL,
+        media: fileURL?.url,
+        statusType: "image",
       };
 
       const onSuccess = () => {
@@ -233,6 +132,7 @@ const ImageStatus = () => {
       const onFinal = () => {
         setStatusFile(null);
         setCroppedImage(null);
+        setIsUploading(false);
       };
 
       await makeRequest(
@@ -248,8 +148,6 @@ const ImageStatus = () => {
     } catch (error) {
       console.error("Upload failed", error);
       toast.error("Failed to upload status");
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -349,7 +247,11 @@ const ImageStatus = () => {
                 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               <MdCheck className="mr-2" />
-              {isUploading ? "Uploading..." : "Upload Status"}
+              {isUploading ? (
+                <LoaderSpinner color={"white"} />
+              ) : (
+                "Upload Status"
+              )}
             </button>
           </div>
         </div>

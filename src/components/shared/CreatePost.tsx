@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../redux/ReduxType";
-import { MdCancel, MdCreate, MdImage, MdVideocam } from "react-icons/md";
+import {
+  MdCancel,
+  MdCategory,
+  MdCreate,
+  MdImage,
+  MdVideocam,
+} from "react-icons/md";
 import { PiFilmReelFill } from "react-icons/pi";
 import { ALLOWED_FILE_TYPES, MAX_FILE_SIZE } from "../../constant/constants";
 import { CgProfile } from "react-icons/cg";
@@ -18,12 +24,14 @@ import Modal from "../modal/Modal";
 import { Link } from "react-router-dom";
 import { getUserLocation } from "../../hooks/getUserLocation";
 import { RxCross1 } from "react-icons/rx";
+import { postCategories } from "../../constant/post.category";
 
 interface ICreatePost {
   userId?: string;
+  refetch?: () => void;
 }
 
-const CreatePost: React.FC<ICreatePost> = ({ userId }) => {
+const CreatePost: React.FC<ICreatePost> = ({ userId, refetch }) => {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [isVideo, setIsVideo] = useState(false);
   const isDark = useAppSelector((state) => state.theme.isDark);
@@ -35,7 +43,8 @@ const CreatePost: React.FC<ICreatePost> = ({ userId }) => {
   const makeRequest = useMakeRequest();
   const dispatch = useDispatch();
   const [showReel, setShowReel] = useState(false);
-  const [showLive, setShowLive] = useState(false);
+  const [category, setCategory] = useState("");
+  const categoryRef = useRef<HTMLSelectElement | null>(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   // const [createPost, {error}] = useMutation(CREATE_POST)
 
@@ -113,14 +122,18 @@ const CreatePost: React.FC<ICreatePost> = ({ userId }) => {
 
   const onSuccess = (data: any) => {
     toast.success("Post created");
-    dispatch(addPost(data.data));
+    if (refetch) refetch();
   };
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-    // console.log('loc -->', userLocation)
     try {
-      let payload = { ...data, author: User._id, location: currentLocation };
+      let payload = {
+        ...data,
+        author: User._id,
+        location: currentLocation,
+        category: category || "General",
+      };
       if (!payload.author) return toast.error("Pls try again");
       if (postFile !== null) {
         const fileURL = await uploadToCloudinary(postFile as File);
@@ -147,8 +160,12 @@ const CreatePost: React.FC<ICreatePost> = ({ userId }) => {
 
   // ------ modals -------
 
-  const handleReelClick = () => {
-    setShowReel(true);
+  const handleCategory = () => {
+    categoryRef.current?.click();
+  };
+
+  const handleChange = (e: any) => {
+    setCategory(e.target.value);
   };
 
   const closeReel = () => {
@@ -245,11 +262,25 @@ const CreatePost: React.FC<ICreatePost> = ({ userId }) => {
           </Link>
 
           <button
-            onClick={handleReelClick}
+            onClick={handleCategory}
             className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 hover:text-gray-600 px-2 py-[2px] rounded-full"
           >
-            <PiFilmReelFill className="text-blue-600 w-4 h-4" />
-            <span>Reel</span>
+            <select
+              className="rounded-full p-[2px] text-slate-500"
+              ref={categoryRef}
+              name="category"
+              id="cayegory"
+              onChange={handleChange}
+            >
+              {postCategories?.map((eachcategory) => {
+                return (
+                  <option value={eachcategory?.value}>
+                    {eachcategory?.label}
+                  </option>
+                );
+              })}
+            </select>
+            <span>Category</span>
           </button>
         </div>
       </div>

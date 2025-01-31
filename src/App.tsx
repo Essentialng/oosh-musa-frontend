@@ -4,7 +4,7 @@ import AppRouter from "./route/AppRouter";
 import { Provider, useDispatch } from "react-redux";
 import store, { persistor } from "./redux/store";
 import { Toaster } from "react-hot-toast";
-import './App.css';
+import "./App.css";
 import { AuthProvider } from "./context/AuthProvider";
 import { PersistGate } from "redux-persist/integration/react";
 import { setPosts } from "./redux/slice/post.slice";
@@ -13,52 +13,49 @@ import { POST_URL } from "./constant/resource";
 import { useMakeRequest } from "./hooks/useMakeRequest";
 import { SocketProvider } from "./context/socket.context";
 
+// const FetchPosts: React.FC = () => {
+//   const dispatch = useDispatch();
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const makeRequest = useMakeRequest()
 
-const FetchPosts: React.FC = () => {
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const makeRequest = useMakeRequest()
+//   useEffect(() => {
+//     const fetchPosts = async () => {
+//       setLoading(true);
+//       const onSuccess = (data:any)=>{
+//         // log to see how the structure looks
+//         const postsData = Array.isArray(data.data)
+//           ? data.data
+//           : data.data.posts || data.data.data || [];
 
+//         dispatch(setPosts(postsData));
+//       }
+//       try {
+//         await makeRequest(
+//             POST_URL + '/all',
+//             'GET',
+//             {},
+//             onSuccess,
+//             (error)=>{setError(error)},
+//             ()=>{setLoading(false)}
+//           )
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setLoading(true);
-      const onSuccess = (data:any)=>{
-        // log to see how the structure looks
-        const postsData = Array.isArray(data.data) 
-          ? data.data 
-          : data.data.posts || data.data.data || [];
+//       } catch (err) {
+//         console.error('Fetch posts error:', err);
+//         setError(err instanceof Error ? err.message : 'An error occurred');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
 
-        dispatch(setPosts(postsData));
-      }
-      try {
-        await makeRequest(
-            POST_URL + '/all',
-            'GET',
-            {},
-            onSuccess,
-            (error)=>{setError(error)},
-            ()=>{setLoading(false)}
-          )
-        
+//     fetchPosts();
+//   }, [dispatch]);
 
-      } catch (err) {
-        console.error('Fetch posts error:', err);
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
+//   if (loading) return <LoaderSpinner color='purple' />;
+//   if (error) return <div>Error fetching posts: {error}</div>;
 
-    fetchPosts();
-  }, [dispatch]);
-
-  if (loading) return <LoaderSpinner color='purple' />;
-  if (error) return <div>Error fetching posts: {error}</div>;
-
-  return null;
-};
+//   return null;
+// };
 
 const App: React.FC = () => {
   return (
@@ -69,7 +66,7 @@ const App: React.FC = () => {
             <Router>
               <Toaster position="top-center" />
               <AppRouter />
-              <FetchPosts />
+              {/* <FetchPosts /> */}
             </Router>
           </SocketProvider>
         </PersistGate>

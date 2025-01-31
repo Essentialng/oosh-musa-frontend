@@ -1,102 +1,47 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  MdAdd,
-  MdCancel,
-  MdCreate,
-  MdImage,
-  MdMoreVert,
-  MdVideocam,
-} from "react-icons/md";
+import { useRef, useState } from "react";
 import "../styles/custom.css";
 
 // ------ imports --------
-import ProfileIMG from "../assets/others/avatar.jpeg";
-import Status1 from "../assets/home/dew.jpg";
-import Status2 from "../assets/home/dew2.jpg";
-import Status3 from "../assets/home/map.svg";
-import Status4 from "../assets/home/game.svg";
-import Status5 from "../assets/home/lantern.svg";
-import Status6 from "../assets/home/whale.svg";
-import Status7 from "../assets/home/tower.svg";
-// import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import Feed from "../components/organisms/Feed";
-// import StatusImg from '../components/molecules/StatusImg';
-import { useAppDispatch, useAppSelector } from "../redux/ReduxType";
+import { useAppSelector } from "../redux/ReduxType";
 import CreatePost from "../components/shared/CreatePost";
-import { CONVERSATION_URL } from "../constant/resource";
-import { useMakeRequest } from "../hooks/useMakeRequest";
-import { setConversations } from "../redux/slice/conversation.slice";
-import { setCurrentConversation } from "../redux/slice/currentConversation.slice";
-// import { Link } from 'react-router-dom';
-import Modal from "../components/modal/Modal";
+import { POST_URL, STATUS_URL } from "../constant/resource";
 import ImageStatus from "../components/organisms/status/Image.status";
-// import VideoStatus from "../components/organisms/status/Video.status";
+import CustomModal from "../components/modal/CustomModal";
+import VideoStatus from "../components/organisms/status/Video.status";
+import TextStatus from "../components/organisms/status/Text.status";
+import CreateStatus from "../components/organisms/status/create.status";
+import FriendStatus from "../components/organisms/status/Friend.status";
+import ViewStatus from "../components/organisms/status/View.status";
+import { useFetchData } from "../hooks/useFetchData";
 
 // ------ imports --------
 
 const Homepage = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const isDark = useAppSelector((state) => state.theme.isDark);
-  const auth = useAppSelector((state) => state.user);
+  const isDark = useAppSelector((state) => state?.theme?.isDark);
+  const auth = useAppSelector((state) => state?.user);
   const userId: string | null = auth?._id;
-  const post = useAppSelector((state) => state.posts);
-  const [loading, setLoading] = useState(false);
+  const [statusModal, setStatusModal] = useState(false);
+  const [userStatus, setUserStatus] = useState([]);
+  const [friendStatus, setFriendStatus] = useState([]);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const makeRequest = useMakeRequest();
-  const dispatch = useAppDispatch();
   const [statusType, setStatusType] = useState<"image" | "video" | "text">(
     "image"
   );
 
-  // fetch all users conversation
-  useEffect(() => {
-    console.log("userId -->", auth);
-    if (userId === "") return;
-    const onSuccess = (data: any) => {
-      dispatch(setConversations(data.data));
-      if (data.data.length > 0) {
-        // console.log(data.data[0])
-        dispatch(setCurrentConversation(data.data[0]));
-      }
-    };
+  const {
+    data: postData,
+    error: postError,
+    loading: loadingPost,
+    refetch,
+  } = useFetchData<any>(POST_URL + "/all");
 
-    const fetchUserConversations = async () => {
-      setLoading(true);
-      const payload = { userId: auth._id };
-      try {
-        await makeRequest(
-          CONVERSATION_URL + "/allConversation",
-          "POST",
-          payload,
-          onSuccess,
-          (error) => {
-            console.log(error);
-          },
-          () => {
-            setLoading(false);
-          }
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchUserConversations();
-  }, []);
-
-  const [statusList] = React.useState([
-    { id: 1, img: Status1, title: "Camping" },
-    { id: 2, img: Status2, title: "Dog Walking" },
-    { id: 3, img: Status3, title: "Freelance" },
-    { id: 4, img: Status4, title: "Feestyle" },
-  ]);
-
-  const [statusList2] = React.useState([
-    { id: 1, img: Status5, title: "Camping" },
-    { id: 2, img: Status6, title: "Dog Walking" },
-    { id: 3, img: Status7, title: "Freelance" },
-    { id: 4, img: Status4, title: "Feestyle" },
-  ]);
+  const {
+    data: statusData,
+    error: statusError,
+    loading: statusLoading,
+  } = useFetchData<any>(STATUS_URL + `/${auth?._id}`);
 
   // ----------- scroll --------------
   const scrollLeft = () => {
@@ -121,15 +66,22 @@ const Homepage = () => {
     setShowModal(false);
   };
 
+  const handleViewMyStatus = () => {
+    if (userStatus?.length === 0) return;
+    setStatusModal(true);
+  };
+
   const renderStatusModalContent = () => {
     switch (statusType) {
       case "image":
         return <ImageStatus />;
         break;
       case "text":
-        return <h1>hello</h1>;
-      //   case "video":
-      //     return <VideoStatus />;
+        return <TextStatus />;
+        break;
+      case "video":
+        return <VideoStatus />;
+        break;
       default:
         break;
     }
@@ -152,88 +104,70 @@ const Homepage = () => {
           {/* ... scroll buttons ... */}
 
           {/* Status Creation Section */}
-          <div className="sm:w-[120px] w-[60px] sm:h-[160px] h-[60px] relative carousel-item pl-10">
-            <img
-              className="w-full h-full object-cover sm:rounded-lg rounded-full"
-              src={auth?.avatar || ProfileIMG}
-              alt=""
+          <div className="flex items-center justify-center">
+            <CreateStatus
+              setShowModal={setShowModal}
+              setStatusType={setStatusType}
+              userStatus={statusData?.userStatus}
+              setStatusModal={setStatusModal}
             />
-            <div
-              className={`dropdown dropdown-end ${
-                isDark ? "text-deepBg" : "bg-lightBg"
-              }`}
-            >
-              <div
-                tabIndex={0}
-                role="button"
-                className={`p-[4px] absolute -left-32 bottom-0 cursor-pointer w-8 h-8 rounded-full flex items-center justify-center
-                                ${
-                                  isDark
-                                    ? "bg-deepBg text-lightText"
-                                    : "bg-lightBg text-darkBg"
-                                }`}
-              >
-                <MdAdd />
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content menu bg-base-100 rounded-box z-[100] w-32 p-2 shadow"
-              >
-                <li>
-                  <button
-                    onClick={() => handleStatusClick("image")}
-                    className="flex items-center gap-2"
-                  >
-                    <MdImage /> Image
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => handleStatusClick("video")}
-                    className="flex items-center gap-2"
-                  >
-                    <MdVideocam /> Video
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => handleStatusClick("text")}
-                    className="flex items-center gap-2"
-                  >
-                    <MdCreate /> Text
-                  </button>
-                </li>
-              </ul>
-            </div>
+            {friendStatus?.length ? (
+              <FriendStatus status={statusData?.friendStatus} />
+            ) : null}
           </div>
-
           {/* ... StatusImg components ... */}
         </section>
       ) : null}
 
       {/**----- Create a post ------ */}
-      {userId ? <CreatePost userId={auth?._id} /> : null}
+      {userId ? <CreatePost refetch={refetch} userId={auth?._id} /> : null}
 
       {/**---- News feed ----- */}
       <section
         className={`text-xs mt-10 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100`}
       >
-        {post?.posts?.length > 0 ? (
-          post?.posts?.map((eachData: any) => {
-            return <Feed isDark={isDark} data={eachData} />;
+        {postData?.length > 0 ? (
+          postData?.map((eachData: any) => {
+            return (
+              <Feed
+                showAll={false}
+                isDark={isDark}
+                refetch={refetch}
+                data={eachData}
+              />
+            );
           })
         ) : (
           <p>No feed found</p>
         )}
       </section>
 
-      <Modal
-        showModal={showModal}
-        toggler={closeModal}
-        title={`Create ${statusType} Status`}
+      <CustomModal
+        isOpen={statusModal}
+        onClose={() => {
+          setStatusModal(false);
+        }}
+        // title="Image Modal"
+        size="md"
+        className="min-h-[400px]"
+      >
+        <ViewStatus
+          userStatus={userStatus as []}
+          close={() => {
+            setStatusModal(false);
+          }}
+        />
+      </CustomModal>
+
+      <CustomModal
+        isOpen={showModal}
+        onClose={closeModal}
+        // title="Image Modal"
+        size="lg"
+        className="min-h-[400px]"
       >
         {renderStatusModalContent()}
-      </Modal>
+      </CustomModal>
     </div>
   );
 };
