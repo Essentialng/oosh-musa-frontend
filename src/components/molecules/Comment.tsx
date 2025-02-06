@@ -5,10 +5,13 @@ import { useAppSelector } from "../../redux/ReduxType";
 import { useMakeRequest } from "../../hooks/useMakeRequest";
 import { COMMENT_URL } from "../../constant/resource";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
-import { setPosts } from "../../redux/slice/post.slice";
+// import { useDispatch } from "react-redux";
+// import { setPosts } from "../../redux/slice/post.slice";
 import { MdMoreVert } from "react-icons/md";
 import LoaderSpinner from "./Loader/Loader.spinner";
+import { useNavigate } from "react-router-dom";
+import DEFAULT_PROFILE from "../../assets/others/avatar.jpeg";
+import { timeAgo } from "../../utils/day.format";
 
 interface CommentProps {
   id: number;
@@ -34,7 +37,7 @@ const Comment: React.FC<CommentProps> = ({
   id,
   authorId,
   name,
-  imgSrc = DEFAULT_AVATAR,
+  imgSrc,
   timestamp,
   content,
   isDark = false,
@@ -44,16 +47,20 @@ const Comment: React.FC<CommentProps> = ({
   refetch,
   localRefetch,
 }) => {
-  const [isImageError, setIsImageError] = useState(false);
+  // const [isImageError, setIsImageError] = useState(false);
   const user = useAppSelector((state) => state.user);
   const [loadingDelete, setLoadingdelete] = useState<boolean>(false);
   const [openReport, setOpenReport] = useState<boolean>(false);
   const makeRequest = useMakeRequest();
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLike = () => {
-    console.log("likes", likes);
-    if (likes.includes(user._id))
+    if (!user?._id) {
+      toast.error("Signin to continue");
+      navigate("/register");
+      return;
+    }
+    if (likes.includes(user?._id))
       return toast.error("You already like this post");
     const payload = {
       userId: user._id,
@@ -63,7 +70,6 @@ const Comment: React.FC<CommentProps> = ({
     const onSuccess = (data: any) => {
       if (refetch) refetch();
       if (localRefetch) localRefetch();
-      // dispatch(setPosts(data?.data?.post));
     };
 
     const onFailure = (error: any) => {
@@ -86,7 +92,12 @@ const Comment: React.FC<CommentProps> = ({
   };
 
   const handleDislike = () => {
-    if (!likes.includes(user._id))
+    if (!user?._id) {
+      toast.error("signin to continue");
+      navigate("/register");
+      return;
+    }
+    if (!likes.includes(user?._id))
       return toast.error("You have not like this post");
     const payload = {
       userId: user._id,
@@ -152,9 +163,9 @@ const Comment: React.FC<CommentProps> = ({
     );
   };
 
-  const handleImageError = () => {
-    setIsImageError(true);
-  };
+  // const handleImageError = () => {
+  //   setIsImageError(true);
+  // };
 
   return (
     <article
@@ -164,18 +175,16 @@ const Comment: React.FC<CommentProps> = ({
     >
       <img
         className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-        src={isImageError ? DEFAULT_AVATAR : imgSrc}
+        src={imgSrc || DEFAULT_PROFILE}
         alt={`${name}'s avatar`}
-        onError={handleImageError}
+        // onError={handleImageError}
       />
 
       <div className="flex-1 space-y-2">
         <header className="flex items-center gap-2 justify-between">
           <div className="flex items-center gap-2">
             <h3 className="font-medium">{name}</h3>
-            <time className="text-sm text-slate-500" dateTime={timestamp}>
-              {timestamp}
-            </time>
+            <p>{timeAgo(timestamp)}</p>
           </div>
           <div
             className={`dropdown dropdown-end ${
@@ -219,7 +228,7 @@ const Comment: React.FC<CommentProps> = ({
 
         <p className="text-sm whitespace-pre-wrap break-words">{content}</p>
 
-        <footer className="flex gap-6 pt-2">
+        {/* <footer className="flex gap-6 pt-2">
           <button
             onClick={handleLike}
             className="flex items-center gap-2 text-sm hover:text-blue-500 transition-colors"
@@ -237,7 +246,7 @@ const Comment: React.FC<CommentProps> = ({
             <span>{dislikes?.length}</span>
             <FaRegThumbsDown className="w-4 h-4" />
           </button>
-        </footer>
+        </footer> */}
       </div>
     </article>
   );

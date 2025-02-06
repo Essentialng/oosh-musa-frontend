@@ -14,7 +14,12 @@
 // }
 
 // ---------- version 2 ------------
-import { formatDistance, formatRelative } from "date-fns";
+import {
+  formatDistance,
+  formatRelative,
+  parseISO,
+  formatDistanceToNow,
+} from "date-fns";
 
 // Formatting a post timestamp
 export function getPostTimestamp(createdAt: Date | string): string {
@@ -31,4 +36,23 @@ export function getDetailedTimestamp(createdAt: Date | string): string {
 
   return formatRelative(timeStamp, new Date());
   // Outputs like "last Tuesday at 4:30 PM"
+}
+
+export function timeAgo(date: string | null | undefined) {
+  try {
+    if (!date) {
+      return date;
+    }
+
+    const convertedDate = parseISO(date);
+
+    if (isNaN(convertedDate.getTime())) {
+      return date;
+    }
+
+    return formatDistanceToNow(convertedDate, { addSuffix: true });
+  } catch (error) {
+    console.log(error);
+    return date;
+  }
 }

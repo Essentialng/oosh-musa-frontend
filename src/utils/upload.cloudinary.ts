@@ -41,8 +41,8 @@ export const uploadToCloudinary = async (
 ) => {
   // Validate file type and size
   const fileType: string = file.type.split("/")[0];
-  console.log(file);
-  console.log("filetype -->", fileType);
+  // console.log(file);
+  // console.log("filetype -->", fileType);
   const config: FileTypeConfig = FILE_TYPES[fileType as FileTypeKey];
 
   if (!config.acceptedFormats.includes(file.type)) {

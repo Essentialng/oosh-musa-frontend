@@ -38,7 +38,7 @@ const Header = () => {
         isDark
           ? "bg-darkBg transition-all duration-500 text-darkText"
           : "bg-lightBg text-left"
-      } px-10 w-[100%] mx-auto shadow-md`}
+      } px-5 w-[100%] mx-auto shadow-md`}
     >
       <div className="navbar">
         {/* left section */}
@@ -87,7 +87,7 @@ const Header = () => {
 
         {/* right section */}
         <div className="navbar-end flex gap-2 items-center gap-2">
-          <div className="p-2 relative">
+          {/* <div className="p-2 relative">
             <BsBell />
             <Link
               to={`notification/${auth._id}`}
@@ -95,7 +95,7 @@ const Header = () => {
             >
               {1}
             </Link>
-          </div>
+          </div> */}
           <div className="avatar">
             <div className="w-6 rounded-full">
               {auth?.avatar ? (

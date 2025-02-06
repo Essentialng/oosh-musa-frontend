@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { MdError, MdMoreVert } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHeart, FaShare } from "react-icons/fa";
+import { FaFacebook, FaHeart, FaShare, FaWhatsapp } from "react-icons/fa";
 import { BsChatDots, BsCheck } from "react-icons/bs";
 import Comment from "../molecules/Comment";
 import "../../styles/custom.css";
@@ -17,11 +17,15 @@ import { COMMENT_URL, POST_URL } from "../../constant/resource";
 import toast from "react-hot-toast";
 import LoaderSpinner from "../molecules/Loader/Loader.spinner";
 import { useFetchData } from "../../hooks/useFetchData";
-import { getPostTimestamp } from "../../utils/day.format";
+import { getPostTimestamp, timeAgo } from "../../utils/day.format";
 import { addComment, setPosts, updatePost } from "../../redux/slice/post.slice";
 import { SiSimpleanalytics } from "react-icons/si";
 import CustomModal from "../modal/CustomModal";
 import { CgUserAdd } from "react-icons/cg";
+import MainModal from "../modal/Second.modal";
+import { FaXTwitter } from "react-icons/fa6";
+import { IoLinkOutline } from "react-icons/io5";
+import { handleSocial } from "../../utils/sharePost";
 
 interface IFeedProps {
   isDark: boolean;
@@ -39,6 +43,8 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
   const user = useAppSelector((state) => state.user);
   const [friendModal, setFriendModal] = useState(false);
   const [canEran, setCanEarn] = useState(false);
+  const [shareModal, setShareModal] = useState(false);
+  const baseURL = `${process.env.REACT_APP_BASE_URL}/post/${data?._id}`;
 
   const {
     data: refetchData,
@@ -69,24 +75,39 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
     setShowComment(!showComment);
   };
 
+  const handleCopy = async (url: string) => {
+    console.log("first-->", url);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("copied");
+      return;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleViewPost = (postId: string) => {
     navigate(`/post/${postId}`);
   };
 
   const handleShare = () => {
-    alert("Share triggered");
+    setShareModal(true);
   };
 
   const handleLike = () => {
-    if (!user) return toast.error("Signin to continue");
+    if (!user?._id) {
+      toast.error("Signin to continue");
+      navigate("/register");
+      return;
+    }
     const payload = {
       userId: user._id,
       postId: data?._id,
     };
     const onSuccess = (data: any) => {
       dispatch(setPosts(data?.data?.allPost));
-      if (refetch) refetch();
-      localRefetch();
+      refetch && refetch();
+      // localRefetch();
     };
 
     const onFailure = (data: any) => {
@@ -114,6 +135,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
         return (
           <Comment
             isDark={isDark}
+            key={eachComment._id}
             id={eachComment?._id}
             name={eachComment?.author?.fullname}
             authorId={eachComment?.author?._id}
@@ -146,6 +168,11 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
 
   const handleMakeComment = useCallback(
     (data: any) => {
+      if (!user?._id) {
+        toast.error("Signin to comment");
+        navigate("/register");
+        return;
+      }
       setLoading(true);
       const payload = {
         ...data,
@@ -186,6 +213,11 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
   };
 
   const handleMessage = () => {
+    if (!user?._id) {
+      toast.error("Signin to message user");
+      navigate("/register");
+      return;
+    }
     if (data?.author?.friends?.includes(user?._id)) {
       navigate(`/chat/${user?._id}`);
     } else {
@@ -236,6 +268,11 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
   };
 
   const handleAdvertisePost = () => {
+    if (!user?._id) {
+      toast.error("Signin to advertise post");
+      navigate("/register");
+      return;
+    }
     navigate(`/register-post/${data?._id}`);
   };
 
@@ -266,10 +303,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
             </div>
             <div>
               <div className="flex items-center justify-start gap-5">
-                <p className="text-xs">
-                  {/* {getPostTimestamp(data.created_at) || data?.created_at} ago */}
-                  {data?.created_at?.split("T")[1].split(".")[0]} ago
-                </p>
+                <p className="text-xs">{timeAgo(data?.created_at)}</p>
               </div>
             </div>
           </div>
@@ -326,10 +360,10 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
           {data?.author?._id !== user?._id ? (
             <div className="flex items-center group">
               <GoDotFill className="group-hover:text-purple-500" />
-              <button onClick={handleEarn}>Earn</button>
+              {user?._id ? <button onClick={handleEarn}>Earn</button> : null}
             </div>
           ) : null}
-          {data?.author?._id !== user?._id ? (
+          {user?._id && data?.author?._id !== user?._id ? (
             <div className="flex items-center group">
               <GoDotFill className="group-hover:text-purple-500" />
               <button onClick={handleMessage}>Message</button>
@@ -468,6 +502,44 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
           </button>
         </div>
       </CustomModal>
+      <MainModal showModal={shareModal} closeModal={() => setShareModal(false)}>
+        <div className="bg-white">
+          <div className="w-full flex flex-col items-start justify-center gap-3">
+            <button
+              onClick={() => {
+                handleCopy(baseURL);
+              }}
+              className="font-semibold flex items-center justify-start gap-3 text-[14px] hover:bg-gray-100 p-2 rounded-full w-full"
+            >
+              <IoLinkOutline className="text-lg" /> Copy link
+            </button>
+            <button
+              onClick={() => {
+                handleSocial("hot topic on oosh", baseURL, "twitter");
+              }}
+              className="font-semibold flex items-center justify-start gap-3 text-[14px] hover:bg-gray-100 p-2 rounded-full w-full"
+            >
+              <FaXTwitter className="text-lg" /> X
+            </button>
+            <button
+              onClick={() => {
+                handleSocial("hot topic on oosh", baseURL, "facebook");
+              }}
+              className="font-semibold flex items-center justify-start gap-3 text-[14px] hover:bg-gray-100 p-2 rounded-full w-full"
+            >
+              <FaFacebook className="text-lg" /> Facebook
+            </button>
+            <button
+              onClick={() => {
+                handleSocial("hot topic on oosh", baseURL, "whatsApp");
+              }}
+              className="font-semibold flex items-center justify-start gap-3 text-[14px] hover:bg-gray-100 p-2 rounded-full w-full"
+            >
+              <FaWhatsapp className="text-lg" /> WhatsApp
+            </button>
+          </div>
+        </div>
+      </MainModal>
     </div>
   );
 };
