@@ -27,6 +27,8 @@ const Header = () => {
     setCurrentMenu(selection);
   };
 
+  console.log("auth -->", auth);
+
   // theme toggle handler function
   const handleDark = () => {
     dispatch(toggle());
@@ -107,7 +109,7 @@ const Header = () => {
           </div>
           {auth?.fullname ? (
             <Link to={`/profile/${auth._id}`} className="">
-              {auth.fullname.split(" ")[1]}
+              {auth.fullname.split(" ")[0]}
             </Link>
           ) : (
             <Link to="/login" className="">
@@ -124,7 +126,7 @@ const Header = () => {
       <NewsCarossel isDark={isDark} />
 
       {/* other products */}
-      <div className="w-full overflow-hidden flex items-center justify-center gap-10 text-sm p-2">
+      {/* <div className="w-full overflow-hidden flex items-center justify-center gap-10 text-sm p-2">
         {headerItems.map((eachItems, index) => {
           return (
             <Link
@@ -138,7 +140,7 @@ const Header = () => {
             </Link>
           );
         })}
-      </div>
+      </div> */}
     </div>
   );
 };

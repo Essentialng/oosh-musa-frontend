@@ -57,10 +57,12 @@ const UpdatePage = () => {
       >
         {/* left side */}
         <div
-          style={{ backgroundImage: `url(${Background})` }}
+          // style={{ backgroundImage: `url(${Background})` }}
           className={`${
             isCollapse ? "w-fit" : "w-1/3"
-          } flex items-start flex-col gap-10 justify-center w-1/3 p-5 text-white h-full overflow-y-hidden`}
+          } flex items-start flex-col gap-10 justify-center w-1/3 p-5 text-white h-full overflow-y-hidden ${
+            isDark ? "" : "bg-neutral-700"
+          }`}
         >
           <div className="flex items-center justify-between w-full transition-all duration-700">
             <h1

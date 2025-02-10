@@ -21,6 +21,7 @@ import { USER_URL } from "../constant/resource";
 import { userInfo } from "os";
 import { useDispatch } from "react-redux";
 import { updateUserProfile } from "../redux/slice/user.slice";
+import { User } from "../type/user.type";
 // import { useQuery } from '@apollo/client'
 // import { GET_USER } from '../graphql/query/user.query'
 // import { GET_USER_POST } from '../graphql/query/post.query'
@@ -68,7 +69,7 @@ const Proflle: React.FC<IProfile> = () => {
   }, []);
 
   const userPost = post?.posts?.filter((eachPost: any) => {
-    return eachPost?.author._id === auth?._id;
+    return eachPost?.author?._id === auth?._id;
   });
 
   // scroll functionality logic
@@ -142,6 +143,14 @@ const Proflle: React.FC<IProfile> = () => {
         </div>
       </section>
 
+      {/* <section>
+        {auth?.status?.length >= 1 ? (
+          <p>Hello status</p>
+        ) : (
+          <p>No status to show</p>
+        )}
+      </section> */}
+
       {/* create post */}
       <div className="pt-10">
         <CreatePost userId={auth._id} />
@@ -163,7 +172,7 @@ const Proflle: React.FC<IProfile> = () => {
         </button>
 
         {/* status section */}
-        <div className="w-[120px] h-[160px] carousel-item">
+        {/* <div className="w-[120px] h-[160px] carousel-item">
           <img
             className="w-full h-full object-cover rounded-lg"
             src={Status1}
@@ -232,7 +241,23 @@ const Proflle: React.FC<IProfile> = () => {
           <p className="absolute bottom-0 text-center text-xs font-semibold">
             Gbosko
           </p>
-        </div>
+        </div> */}
+        {/* {auth?.status?.length >= 1
+          ? auth?.status?.map((eachStatus: any) => {
+              return (
+                <div className="w-[120px] h-[160px] carousel-item">
+                  <img
+                    className="w-full h-full object-cover rounded-lg"
+                    src={Status1}
+                    alt=""
+                  />
+                  <p className="absolute bottom-0 text-center text-xs font-semibold">
+                    Musa
+                  </p>
+                </div>
+              );
+            })
+          : null} */}
 
         {/* toggle button */}
         <button

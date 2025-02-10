@@ -48,7 +48,7 @@ const SidebarWeb = () => {
           link="reel"
         />
 
-        {userId ? (
+        {user?.friends?.length >= 1 ? (
           <ListLink
             Title="chat"
             Logo={

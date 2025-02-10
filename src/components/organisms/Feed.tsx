@@ -72,7 +72,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
   // ---- comment and refetch to update ----
 
   const handleShow = () => {
-    setShowComment(!showComment);
+    navigate(`/post/${data?._id}`);
   };
 
   const handleCopy = async (url: string) => {
@@ -378,7 +378,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
           onClick={() => {
             handleViewPost(data?._id);
           }}
-          className="mb-2 cursor-pointer"
+          className="mb-2 cursor-pointer text-lg"
         >
           {data?.content}
         </p>
@@ -442,7 +442,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
           <input
             type="text"
             className={`text-gray-600 flex items-center outline-none text-sm gap-2 w-full px-2 rounded-full ${
-              isDark ? "" : "border-darkBg border-2"
+              isDark ? "" : "border-neutral-500 border-2"
             } p-3`}
             {...register("content")}
             placeholder=""
@@ -451,7 +451,7 @@ const Feed: React.FC<IFeedProps> = ({ isDark, data, showAll, refetch }) => {
             className={`flex items-center gap-2 border-[2px] rounded-full px-3 py-2 ${
               isDark
                 ? "text-lightBg border-lightBg hover:bg-deepLight hover:text-deepBg"
-                : "text-deepBg border-deepBg hover:bg-deepBg hover:text-darkText"
+                : "text-deepBg hover:bg-neutral-500 hover:text-darkText border-neutral-500"
             }`}
             type="submit"
           >
