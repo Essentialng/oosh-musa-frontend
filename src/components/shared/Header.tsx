@@ -1,9 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-// import {TbCarSuv, TbCirclesRelation, TbWorld} from 'react-icons/tb';
-// import {BsBriefcase, BsHouseCheck, BsMailbox} from 'react-icons/bs'
 import { FaMoon, FaSearch } from "react-icons/fa";
-// import {IoBusiness, IoNavigateCircle} from 'react-icons/io5'
 import { TfiShine } from "react-icons/tfi";
 import { useAppDispatch, useAppSelector } from "../../redux/ReduxType";
 import { toggle } from "../../redux/slice/themeSlice";
@@ -26,8 +23,6 @@ const Header = () => {
   const handleSelectedMenu = (selection: string) => {
     setCurrentMenu(selection);
   };
-
-  console.log("auth -->", auth);
 
   // theme toggle handler function
   const handleDark = () => {

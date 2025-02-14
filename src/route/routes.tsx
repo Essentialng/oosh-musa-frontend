@@ -16,7 +16,7 @@ import Login from "../pages/Login";
 import Meeting from "../pages/Meeting";
 import Messenger from "../pages/Messenger";
 import Messenger2 from "../pages/Messenger2";
-import News from "../pages/News";
+import News from "../pages/news/News";
 import Notification from "../pages/notification/Notification";
 import Plan from "../pages/Plan";
 import Profile from "../pages/Profile";

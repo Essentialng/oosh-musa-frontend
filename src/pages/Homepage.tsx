@@ -37,6 +37,8 @@ const Homepage = () => {
     refetch,
   } = useFetchData<any>(POST_URL + "/all");
 
+  console.log('data -->', postData)
+
   const {
     data: statusData,
     error: statusError,

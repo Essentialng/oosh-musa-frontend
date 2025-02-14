@@ -10,3 +10,4 @@ export const STATUS_URL = "api/v1/status";
 export const REEL_URL = "api/v1/reel";
 export const REPOST_URL = "api/v1/repost";
 export const FORGET_URL = "api/v1/forget";
+export const NEWS_API = "https://essentialnews.connectnesthub.com/";
